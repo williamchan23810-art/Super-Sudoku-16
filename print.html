@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super-Sudoku-16 | Proofreading & Print Dashboard</title>
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    :root {
+      --cell-size: 24px;
+      --font-display: "Courier New", Courier, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --border-color: #1e293b;
+      --thick-border-color: #000000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #f8fafc;
+      color: #0f172a;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    header {
+      margin-bottom: 25px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #1e3a8a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+    }
+
+    .meta-info {
+      background: #f1f5f9;
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      font-size: 0.85rem;
+    }
+
+    .meta-item strong {
+      display: block;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      margin-bottom: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-item span {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    /* Grid Layout Side-by-Side */
+    .grids-wrapper {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .grid-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .grid-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #1e293b;
+    }
+
+    .sudoku-grid {
+      display: grid;
+      grid-template-columns: repeat(16, var(--cell-size));
+      grid-template-rows: repeat(16, var(--cell-size));
+      border: 3px solid var(--thick-border-color);
+      background-color: #ffffff;
+    }
+
+    .cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      color: #000000;
+    }
+
+    /* Block coloring for visual ease */
+    .box-even {
+      background-color: #f1f5f9;
+    }
+
+    /* Thick borders for 4x4 regions */
+    .border-right-thick {
+      border-right: 3px solid var(--thick-border-color);
+    }
+
+    .border-bottom-thick {
+      border-bottom: 3px solid var(--thick-border-color);
+    }
+
+    .number-circle {
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+    }
+
+    /* Selection Screen Dashboard */
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .puzzle-list {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .puzzle-list th, .puzzle-list td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .puzzle-list th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .puzzle-list tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background-color: #ffffff;
+        padding: 0;
+        margin: 0;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .grids-wrapper {
+        gap: 15px;
+      }
+      .sudoku-grid {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="app">
+    <!-- Content injected dynamically -->
+    <div style="text-align: center; padding: 40px 0;">Loading dashboard...</div>
+  </div>
+
+  <script>
+    const alphabet = "ABCDEFG";
+    const TO_CHAR = {};
+    for (let i = 1; i <= 9; i++) TO_CHAR[i] = i.toString();
+    for (let i = 10; i <= 16; i++) {
+      TO_CHAR[i] = alphabet[i - 10];
+    }
+    TO_CHAR[0] = "";
+
+    async function loadApp() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const appContainer = document.getElementById('app');
+
+      try {
+        // Fetch the index
+        const indexResponse = await fetch(`sudoku_puzzles/puzzle_index.json?v=${Date.now()}`);
+        if (!indexResponse.ok) throw new Error("Could not load puzzle index");
+        const indexData = await indexResponse.json();
+
+        if (code) {
+          // Render Single Puzzle Proofread/Print View
+          const target = indexData.find(item => item.id === code);
+          if (!target) {
+            appContainer.innerHTML = `
+              <div style="text-align: center; padding: 40px 0;">
+                <h2>Error: Puzzle Code ${code} not found.</h2>
+                <br>
+                <a href="print.html" class="btn">Return to Dashboard</a>
+              </div>
+            `;
+            return;
+          }
+
+          const puzzleResponse = await fetch(`sudoku_puzzles/${target.file}?v=${Date.now()}`);
+          if (!puzzleResponse.ok) throw new Error("Could not load puzzle file");
+          const puzzleData = await puzzleResponse.json();
+
+          renderPuzzleView(puzzleData);
+        } else {
+          // Render Dashboard List
+          renderDashboard(indexData);
+        }
+      } catch (err) {
+        appContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px 0; color: #ef4444;">
+            <h2>Error Loading Dashboard</h2>
+            <p>${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderDashboard(puzzles) {
+      const appContainer = document.getElementById('app');
+      let rowsHtml = '';
+      
+      // Sort puzzles by ID
+      const sortedPuzzles = [...puzzles].sort((a, b) => a.id.localeCompare(b.id));
+
+      sortedPuzzles.forEach(item => {
+        rowsHtml += `
+          <tr>
+            <td><strong>${item.id}</strong></td>
+            <td>${item.difficulty}</td>
+            <td><code style="font-size:0.75rem;">${item.hash.substring(0, 16)}...</code></td>
+            <td>
+              <a href="print.html?code=${item.id}" class="btn btn-small">View & Print</a>
+            </td>
+          </tr>
+        `;
+      });
+
+      appContainer.innerHTML = `
+        <header>
+          <h1><img src="assets/icon.png" alt="Logo"> Super-Sudoku-16 Dashboard</h1>
+          <a href="index.html" class="btn btn-secondary">Back to Game 🎮</a>
+        </header>
+        <div class="dashboard">
+          <p>This panel displays all puzzles currently saved in the local database. Click <strong>View & Print</strong> to open a side-by-side layout optimized for proofreading and physical printing.</p>
+          
+          <table class="puzzle-list">
+            <thead>
+              <tr>
+                <th>Puzzle Code</th>
+                <th>Difficulty Level</th>
+                <th>Hash Fingerprint</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderPuzzleView(data) {
+      const appContainer = document.getElementById('app');
+      
+      const clueCount = data.puzzle.flat().filter(v => v !== 0).length;
+
+      appContainer.innerHTML = `
+        <header class="no-print">
+          <h1><img src="assets/icon.png" alt="Logo"> Super-Sudoku-16 Proofreader</h1>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="window.print()" class="btn">Print Sheet 🖨️</button>
+            <a href="print.html" class="btn btn-secondary">Dashboard 📋</a>
+          </div>
+        </header>
+
+        <div class="meta-info">
+          <div class="meta-item">
+            <strong>Puzzle Code</strong>
+            <span>${data.id}</span>
+          </div>
+          <div class="meta-item">
+            <strong>Difficulty</strong>
+            <span>${data.difficulty}</span>
+          </div>
+          <div class="meta-item">
+            <strong>Clue Count</strong>
+            <span>${clueCount} Clues</span>
+          </div>
+          <div class="meta-item">
+            <strong>Database Hash</strong>
+            <span style="font-size:0.7rem; font-family:monospace; word-break:break-all;">${data.hash}</span>
+          </div>
+        </div>
+
+        <div class="grids-wrapper">
+          <div class="grid-block">
+            <div class="grid-title">Puzzle Grid</div>
+            <div class="sudoku-grid" id="puzzle-grid"></div>
+          </div>
+          <div class="grid-block">
+            <div class="grid-title">Solution Grid</div>
+            <div class="sudoku-grid" id="solution-grid"></div>
+          </div>
+        </div>
+      `;
+
+      // Render grids
+      drawGrid('puzzle-grid', data.puzzle);
+      drawGrid('solution-grid', data.solution);
+    }
+
+    function drawGrid(containerId, gridData) {
+      const container = document.getElementById(containerId);
+      for (let r = 0; r < 16; r++) {
+        for (let c = 0; c < 16; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+
+          // Block coloring for 4x4 regions
+          const boxRow = Math.floor(r / 4);
+          const boxCol = Math.floor(c / 4);
+          if ((boxRow + boxCol) % 2 === 0) {
+            cell.classList.add('box-even');
+          }
+
+          // Thick borders for 4x4 regions
+          if ((c + 1) % 4 === 0 && c !== 15) {
+            cell.classList.add('border-right-thick');
+          }
+          if ((r + 1) % 4 === 0 && r !== 15) {
+            cell.classList.add('border-bottom-thick');
+          }
+
+          const val = gridData[r][c];
+          if (val > 0) {
+            if (val >= 10) {
+              const circle = document.createElement('div');
+              circle.className = 'number-circle';
+              circle.innerText = TO_CHAR[val];
+              cell.appendChild(circle);
+            } else {
+              cell.innerText = TO_CHAR[val];
+            }
+          }
+
+          container.appendChild(cell);
+        }
+      }
+    }
+
+    loadApp();
+  </script>
+</body>
+</html>
