@@ -1,38 +1,62 @@
 [
   {
-    "id": "E0001",
+    "id": "1000001",
     "hash": "cf71f13b5ceb51f4481e1db9a2e1fe4de4393314cb6d565301cabdfd84667d70",
     "difficulty": "Easy",
-    "file": "easy_E0001.json"
+    "file": "1000001.json"
   },
   {
-    "id": "E0002",
+    "id": "1000002",
     "hash": "332d1395611e0b313787f0588d8983332ca21f57277a87cbd6fa473669792b0f",
     "difficulty": "Easy",
-    "file": "easy_E0002.json"
+    "file": "1000002.json"
   },
   {
-    "id": "E0003",
+    "id": "1000003",
     "hash": "5cb57add669f99ec3851885c4cd5518e243d38caf2f3894c11c7eac1676e1852",
     "difficulty": "Easy",
-    "file": "easy_E0003.json"
+    "file": "1000003.json"
   },
   {
-    "id": "I0001",
+    "id": "4000001",
     "hash": "7286e646c1940acd4e2f8165b339a546887a264b3ee9bd352ffb55b18fd763a5",
-    "difficulty": "Intermediate",
-    "file": "intermediate_I0001.json"
+    "difficulty": "Expert",
+    "file": "4000001.json"
   },
   {
-    "id": "I0002",
+    "id": "4000002",
     "hash": "7e8c98058090b6dd63548da0ade8f2be89cf9d17b8711b43ba2ee3c969e094a1",
-    "difficulty": "Intermediate",
-    "file": "intermediate_I0002.json"
+    "difficulty": "Expert",
+    "file": "4000002.json"
   },
   {
-    "id": "I0003",
+    "id": "4000003",
     "hash": "51a12363dfd6c7e8680fca573565ba7a7953dd93a0af8a44cc19e79470caa628",
+    "difficulty": "Expert",
+    "file": "4000003.json"
+  },
+  {
+    "id": "2000001",
+    "hash": "0df2464de1dcff28ceacda59e2d9c5ead9d805558b62119102ab4e7d66138ea6",
     "difficulty": "Intermediate",
-    "file": "intermediate_I0003.json"
+    "file": "2000001.json"
+  },
+  {
+    "id": "2000002",
+    "hash": "a0c9fc19e5e6705ef1f6323d04ab755971ba72441db9a43cce3223cb874f65e1",
+    "difficulty": "Intermediate",
+    "file": "2000002.json"
+  },
+  {
+    "id": "3000001",
+    "hash": "cc73120029ad211e97285c8ea7b011626e3762a9d48768cc93136ee16216cab3",
+    "difficulty": "Hard",
+    "file": "3000001.json"
+  },
+  {
+    "id": "3000002",
+    "hash": "d5787cc3a4312d3d86fdd61c9147546129a0909e4ce77d00473e7619e32c8285",
+    "difficulty": "Hard",
+    "file": "3000002.json"
   }
 ]
