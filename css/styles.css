@@ -1,0 +1,947 @@
+/*
+ * BillDoku 16x16 Sudoku Premium Styling - Refactored Round 9
+ * Features a progress-based morphing dark/light theme, glassmorphic layout,
+ * and high-fidelity transitions and animations.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Default Stage 1 Dark Mode - Sapphire Blue */
+  --bg-color: #030712; 
+  --card-bg: rgba(17, 24, 39, 0.85);
+  --card-border: rgba(59, 130, 246, 0.25);
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-glow: rgba(59, 130, 246, 0.4);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --grid-border: #94a3b8; /* Silver grey inside lines for high contrast in Dark Mode */
+  --box-border: #3b82f6;
+  --cell-bg-even: #0f172a; 
+  --cell-bg-odd: #1e293b; 
+  --cell-hover: rgba(59, 130, 246, 0.2);
+  --cell-highlight: rgba(59, 130, 246, 0.35);
+  --cell-same-val: rgba(59, 130, 246, 0.35);
+  --text-given: #ffffff;
+  --text-player: #ef4444; /* Red colors for player digits in Dark Mode */
+  --text-note: #cbd5e1;
+  
+  --collision-bg: rgba(239, 68, 68, 0.2);
+  --collision-border: #ef4444;
+  --collision-text: #f87171;
+
+  --cell-size: 38px;
+  --font-display: 'Abadi Extra Light', 'Abadi', 'Abadi MT Condensed Extra Light', sans-serif;
+  --font-sans: 'Abadi Extra Light', 'Abadi', 'Abadi MT Condensed Extra Light', sans-serif;
+  
+  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --glass-blur: backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+
+/* --- THEME STAGE 2: Amethyst Purple (33% to 66% Completion) --- */
+body.stage-2 {
+  --bg-color: #0b0514;
+  --card-bg: rgba(24, 18, 36, 0.85);
+  --card-border: rgba(168, 85, 247, 0.25);
+  --accent-color: #a855f7;
+  --accent-hover: #9333ea;
+  --accent-glow: rgba(168, 85, 247, 0.4);
+  --box-border: #a855f7;
+  --cell-bg-even: #1a0f2e;
+  --cell-bg-odd: #2a1b40;
+  --cell-hover: rgba(168, 85, 247, 0.2);
+  --cell-highlight: rgba(59, 130, 246, 0.35);
+  --cell-same-val: rgba(168, 85, 247, 0.35);
+}
+
+/* --- THEME STAGE 3: Emerald Matrix (66% to 100% Completion) --- */
+body.stage-3 {
+  --bg-color: #020806;
+  --card-bg: rgba(15, 28, 24, 0.85);
+  --card-border: rgba(16, 185, 129, 0.25);
+  --accent-color: #10b981;
+  --accent-hover: #059669;
+  --accent-glow: rgba(16, 185, 129, 0.4);
+  --box-border: #10b981;
+  --cell-bg-even: #081c15;
+  --cell-bg-odd: #102e22;
+  --cell-hover: rgba(16, 185, 129, 0.2);
+  --cell-highlight: rgba(59, 130, 246, 0.35);
+  --cell-same-val: rgba(16, 185, 129, 0.35);
+}
+
+/* --- LIGHT MODE VARIATION --- */
+body.light-mode {
+  --bg-color: #faf9f6;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(148, 163, 184, 0.35);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --grid-border: #2563eb; /* Blue lines for high contrast in Light Mode */
+  --box-border: #2563eb;
+  --cell-bg-even: #ffffff;
+  --cell-bg-odd: #f1f5f9;
+  --text-given: #0f172a;
+  --text-player: #dc2626; /* Red colors for player digits in Light Mode */
+  --text-note: #475569;
+  --shadow-premium: 0 8px 32px 0 rgba(15, 23, 42, 0.15);
+  
+  /* Light Stage 1 */
+  --accent-color: #1d4ed8;
+  --accent-hover: #172554;
+  --accent-glow: rgba(29, 78, 216, 0.2);
+  --cell-hover: rgba(29, 78, 216, 0.15);
+  --cell-highlight: rgba(255, 255, 0, 0.5);
+  --cell-same-val: rgba(29, 78, 216, 0.22);
+}
+
+body.light-mode.stage-2 {
+  --bg-color: #faf5ff;
+  --accent-color: #6d28d9;
+  --accent-hover: #4c1d95;
+  --accent-glow: rgba(109, 40, 217, 0.2);
+  --box-border: #2563eb;
+  --cell-hover: rgba(109, 40, 217, 0.15);
+  --cell-highlight: rgba(255, 255, 0, 0.5);
+  --cell-same-val: rgba(109, 40, 217, 0.22);
+}
+
+body.light-mode.stage-3 {
+  --bg-color: #f0fdf4;
+  --accent-color: #047857;
+  --accent-hover: #064e3b;
+  --accent-glow: rgba(4, 120, 87, 0.2);
+  --box-border: #2563eb;
+  --cell-hover: rgba(4, 120, 87, 0.15);
+  --cell-highlight: rgba(255, 255, 0, 0.5);
+  --cell-same-val: rgba(4, 120, 87, 0.22);
+}
+
+/* --- Base Reset & Transition --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, #fc8301 0%, #fc6400 100%) no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  transition: background 1s ease, color 1s ease;
+}
+
+/* --- Layout Elements --- */
+header {
+  text-align: center;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#appIcon {
+  width: 95px;
+  height: 95px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid var(--accent-color);
+  box-shadow: var(--shadow-premium);
+  margin-bottom: 6px;
+  transition: border-color 1s ease;
+}
+
+header p {
+  color: var(--text-muted);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.app-layout {
+  display: flex;
+  gap: 15px;
+  max-width: 950px;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+/* --- Glassmorphic Panels --- */
+.glass-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px; 
+  transition: background-color 1s ease, border-color 1s ease, box-shadow 1s ease;
+}
+
+/* Aqua Blue Glass Card styling */
+.card-aqua-blue {
+  background: rgba(6, 182, 212, 0.16) !important; /* Aqua/Cyan translucent tint */
+  border: 1.5px solid rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 8px 32px 0 rgba(6, 182, 212, 0.18) !important;
+}
+
+body.light-mode .card-aqua-blue {
+  background: rgba(224, 252, 254, 0.9) !important; /* Aqua/Cyan opaque light */
+  border: 1.5px solid rgba(6, 182, 212, 0.45) !important;
+  box-shadow: 0 8px 32px 0 rgba(6, 182, 212, 0.08) !important;
+}
+
+.control-panel {
+  flex: 1;
+  min-width: 240px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grid-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- Coordinate Headers --- */
+.grid-wrapper-with-headers {
+  display: inline-grid;
+  grid-template-columns: 24px auto;
+  grid-template-rows: 24px auto;
+  align-items: center;
+  justify-items: center;
+}
+
+.grid-top-headers {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  width: 100%;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent-color);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  transition: color 1s ease;
+}
+
+.grid-left-headers {
+  display: grid;
+  grid-template-rows: repeat(16, 1fr);
+  height: 100%;
+  width: 24px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent-color);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  align-items: center;
+  justify-content: center;
+  transition: color 1s ease;
+}
+
+/* --- Interactive Grid --- */
+.grid-container {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--grid-border);
+  padding: 3px;
+  transition: background-color 1s ease;
+}
+
+.billdoku-grid {
+  display: grid;
+  grid-template-columns: repeat(16, var(--cell-size));
+  grid-template-rows: repeat(16, var(--cell-size));
+  background: var(--grid-border);
+  border: 3px solid var(--box-border); /* Thicker outer border */
+  transition: border-color 1s ease, background-color 1s ease;
+}
+
+/* Cell Design */
+.cell {
+  position: relative;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: var(--cell-bg-odd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-right: 1px solid var(--grid-border);
+  border-bottom: 1px solid var(--grid-border);
+  transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.cell.box-even {
+  background: var(--cell-bg-even);
+}
+
+.cell.highlight-axis {
+  background-color: var(--cell-highlight);
+}
+
+.cell.highlight-same-val {
+  background-color: var(--cell-same-val);
+  font-weight: 800;
+}
+
+.cell.selected {
+  outline: 3px solid var(--accent-color); /* Thicker outline */
+  outline-offset: -3px;
+  background-color: var(--cell-hover) !important;
+  z-index: 10;
+}
+
+/* Givens */
+.cell.given {
+  color: var(--text-given);
+  font-weight: 800;
+}
+
+body.light-mode .cell.given {
+  color: #0f172a;
+}
+
+/* Player Fills */
+.cell.player-filled {
+  color: var(--text-player);
+  font-weight: 700;
+  animation: cellFill 0.15s ease-out;
+  transition: color 1s ease;
+}
+
+/* Notes Grid (Mini 4x4 inside cell) */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.note-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--text-note);
+  line-height: 1;
+}
+
+/* Thick Box Borders for 4x4 subgrids */
+.cell.border-right-thick {
+  border-right: 3px solid var(--box-border); 
+}
+.cell.border-bottom-thick {
+  border-bottom: 3px solid var(--box-border); 
+}
+
+/* Collision Alert */
+.cell.collision {
+  background-color: var(--collision-bg) !important;
+  color: var(--collision-text) !important;
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Circular Wrap for Numbers 10-16 */
+.number-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* --- Panel Sections & UI Elements --- */
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.panel-section h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 3px;
+  margin-bottom: 1px;
+}
+
+.card-aqua-blue h3 {
+  color: #0891b2; /* Aqua cyan heading */
+  border-bottom-color: rgba(6, 182, 212, 0.35);
+}
+
+body.light-mode .card-aqua-blue h3 {
+  color: #0e7490;
+  border-bottom-color: rgba(6, 182, 212, 0.45);
+}
+
+/* Custom Select Styling */
+.control-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Difficulty Select: White text on Blue background */
+select#difficultySelect {
+  width: 100%;
+  background-color: #2563eb; 
+  color: #ffffff; 
+  border: 1.5px solid #1d4ed8;
+  padding: 4px 8px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  outline: none;
+  height: 28px;
+  transition: all 0.2s;
+}
+
+select#difficultySelect option {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+select#difficultySelect:focus {
+  border-color: #1d4ed8;
+}
+
+/* --- Buttons --- */
+.btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1.5px solid #1d4ed8 !important;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.75rem;
+  height: 28px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.4);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* In Progress Button Locked Style (Dark color) */
+.btn:disabled.btn-progress {
+  background-color: #111827 !important;
+  color: #4b5563 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+body.light-mode .btn:disabled.btn-progress {
+  background-color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+
+.btn-secondary {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1.5px solid #1d4ed8 !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.4);
+}
+
+.btn-small {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  height: 24px;
+  min-width: 55px;
+}
+
+.bottom-actions-row {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.bottom-actions-row .btn {
+  flex: 1;
+  height: 28px;
+  font-size: 0.72rem;
+  padding: 4px 6px;
+}
+
+/* Keypad Grid (1 row of 16 columns) */
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 2px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.keypad-panel {
+  width: 100%;
+  max-width: 614px;
+  padding: 8px;
+}
+
+/* Numbers buttons 1-16 under Puzzle in Red background */
+.keypad-grid .key-btn {
+  background-color: #2563eb !important; /* Blue */
+  border: 1px solid #1d4ed8 !important;
+  color: #ffffff !important;
+  border-radius: 6px;
+  padding: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+}
+
+.keypad-grid .key-btn:hover {
+  background-color: #1d4ed8 !important;
+  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.4) !important;
+  transform: scale(1.05);
+}
+
+.keypad-grid .key-btn:active {
+  transform: scale(0.95);
+}
+
+.keypad-grid .key-btn .number-circle {
+  border-color: currentColor;
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+}
+
+/* Control buttons below keypad */
+.keypad-actions {
+  display: flex;
+  flex-direction: row; /* Strict side-by-side row direction layout */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 6px;
+}
+
+/* --- Note Pad in White Styling --- */
+.notepad-btn {
+  background-color: #ffffff !important; /* White notepad buttons */
+  color: #0f172a !important; /* Dark text */
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 6px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.notepad-btn:hover:not([style*="pointer-events: none"]) {
+  border-color: var(--accent-color) !important;
+  background-color: #f1f5f9 !important;
+}
+
+.notepad-btn.note-active {
+  background-color: var(--accent-color) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+.notepad-btn .number-circle {
+  border-color: currentColor;
+  width: 18px;
+  height: 18px;
+  font-size: 0.65rem;
+}
+
+/* --- Progress Card --- */
+.progress-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.progress-bar-outer {
+  height: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.progress-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-color);
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 1s ease;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Generator Loading Screen overlay */
+.generator-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(11, 15, 25, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  gap: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.generator-loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.light-mode .generator-loading-overlay {
+  background: rgba(248, 250, 252, 0.85);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--card-border);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  text-align: center;
+}
+
+/* Floating Keypad Popup */
+.floating-keypad {
+  position: fixed;
+  background: var(--card-bg);
+  border: 1px solid var(--accent-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px;
+  z-index: 999;
+  width: 180px;
+  animation: popIn 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glass-blur: backdrop-filter: blur(16px);
+}
+
+.floating-key-btn {
+  background: #2563eb !important;
+  border: 1.5px solid #1d4ed8 !important;
+  border-radius: 6px;
+  color: #ffffff !important;
+  padding: 6px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-key-btn:hover {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+}
+
+.floating-key-btn .number-circle {
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+}
+
+/* Status Console */
+.status-bar {
+  width: 100%;
+  font-size: 0.75rem;
+  color: #ffffff !important;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* Canvas Confetti */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+/* --- Animations --- */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes cellFill {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive Scaling */
+@media (max-width: 900px) {
+  :root {
+    --cell-size: 32px;
+  }
+  .app-layout {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .control-panel {
+    max-width: 530px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 580px) {
+  :root {
+    --cell-size: 20px;
+  }
+  .cell {
+    font-size: 0.65rem;
+  }
+  .number-circle {
+    width: 15px;
+    height: 15px;
+    font-size: 0.5rem;
+    border-width: 1px;
+  }
+  .note-cell {
+    font-size: 0.35rem;
+  }
+  .grid-wrapper-with-headers {
+    grid-template-columns: 16px auto;
+    grid-template-rows: 16px auto;
+  }
+  .grid-top-headers {
+    height: 16px;
+    line-height: 16px;
+    font-size: 0.55rem;
+  }
+  .grid-left-headers {
+    width: 16px;
+    font-size: 0.55rem;
+  }
+}
+
+/* Custom Modal Dialog */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-card {
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: #ef4444;
+}
+.modal-card p {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.modal-actions .btn {
+  flex: 1;
+}
+.btn-danger {
+  background: #2563eb !important;
+  border: 1.5px solid #1d4ed8 !important;
+  color: #ffffff !important;
+}
+.btn-danger:hover {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+}
+
+/* Clue active button */
+.btn.clue-active {
+  background: #38bdf8 !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6) !important;
+}
+
+.btn.clue-active:hover {
+  background: #0284c7 !important;
+}
+
+/* Clue highlighted cells on grid */
+.cell.clue-highlighted {
+  background-color: rgba(6, 182, 212, 0.28) !important;
+  outline: 2px solid #06b6d4 !important;
+  outline-offset: -2px;
+}
+

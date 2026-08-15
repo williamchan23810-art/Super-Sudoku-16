@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super-Sudoku-16 - Advanced Sudoku Engine</title>
+  
+  <!-- Open Graph / Meta Debugger Metadata -->
+  <meta property="og:title" content="Super-Sudoku-16 - Advanced Sudoku Engine">
+  <meta property="og:description" content="Play the ultimate 16x16 Sudoku game with progress-based dynamic themes.">
+  <meta property="og:image" content="assets/icon.png">
+  <meta property="og:type" content="website">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="light-mode">
+
+  <!-- Confetti Canvas for Victory Animation -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <header>
+    <!-- Header with custom logo icon -->
+    <img src="assets/icon.png" id="appIcon" alt="Super-Sudoku-16 Logo">
+    <p>Created by WILLIAMHCHANSTUDIO</p>
+  </header>
+
+  <div class="app-layout">
+    
+    <!-- LEFT PANEL: Game Controls & Settings (Consolidated) -->
+    <div class="control-panel">
+      <div class="glass-panel card-aqua-blue" style="display: flex; flex-direction: column; gap: 10px;">
+        <h3>Player Settings</h3>
+        
+        <!-- Difficulty Select and Start next to each other -->
+        <div class="control-row" style="gap: 6px;">
+          <div class="form-group" style="flex: 0.75;">
+            <select id="difficultySelect">
+              <option value="easy">Easy</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="hard">Hard</option>
+              <option value="master">Master</option>
+            </select>
+          </div>
+          <button id="generateBtn" class="btn" style="flex: 1.25; height: 28px;" onclick="generateNewPuzzle()">
+            Start 🏁
+          </button>
+        </div>
+
+        <!-- Alert, Sound, Theme buttons in 1 row -->
+        <div class="control-row" style="display: flex; gap: 4px; width: 100%;">
+          <div class="form-group" style="flex: 1; align-items: center;">
+            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Alert</label>
+            <button id="alertToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleAlert()">
+              ON
+            </button>
+          </div>
+          <div class="form-group" style="flex: 1; align-items: center;">
+            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Sound</label>
+            <button id="soundToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleSound()">
+              ON
+            </button>
+          </div>
+          <div class="form-group" style="flex: 1; align-items: center;">
+            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Theme</label>
+            <button id="themeToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleThemeMode()">
+              DARK
+            </button>
+          </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(6, 182, 212, 0.25); margin: 4px 0;">
+
+        <!-- Puzzle Progress and Timer in one row -->
+        <div class="control-row" style="justify-content: space-between; align-items: center; width: 100%;">
+          <!-- Progress (Left) -->
+          <div style="flex: 1.2; display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500; display: flex; justify-content: space-between;">
+              <span>Progress: <strong id="progressText">0%</strong></span>
+              <span id="docNumDisplay" style="color: var(--color-aqua-blue); font-weight: 700;">Doc #: -</span>
+            </span>
+            <div class="progress-bar-outer" style="height: 4px;">
+              <div id="progressBar" class="progress-bar-inner"></div>
+            </div>
+          </div>
+          <!-- Timer (Right) -->
+          <div style="flex: 0.8; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+            <div id="statTimer" class="stat-value" style="font-size: 1.15rem; line-height: 1; font-weight: 700;">00:00</div>
+            <button id="timerToggleBtn" class="btn btn-secondary btn-small" style="height: 22px; padding: 2px 6px; font-size: 0.65rem; min-width: auto;" onclick="toggleTimerVisibility()">
+              HIDE
+            </button>
+          </div>
+        </div>
+
+        <!-- Row of Actions: Reset, Solution, New Game -->
+        <div class="bottom-actions-row">
+          <button id="resetBtn" class="btn btn-secondary" onclick="resetBoard()" title="Reset (Clear all)">
+            Reset
+          </button>
+          <button id="solveBtn" class="btn btn-secondary" onclick="confirmShowSolution()" title="Solution">
+            Solution
+          </button>
+          <button id="newGameBtn" class="btn btn-secondary" onclick="generateNewPuzzle()" title="New Game">
+            New Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Interactive Grid and Keypad -->
+    <div class="grid-panel">
+      
+      <!-- Coordinate Headers Wrapper -->
+      <div class="grid-wrapper-with-headers">
+        <!-- Top Left spacer -->
+        <div></div>
+        
+        <!-- Top headers mapped A to P (1 alphabet per column) -->
+        <div class="grid-top-headers">
+          <div>A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div><div>H</div>
+          <div>I</div><div>J</div><div>K</div><div>L</div><div>M</div><div>N</div><div>O</div><div>P</div>
+        </div>
+        
+        <!-- Left headers mapped 1 to 16 (1 number per row) -->
+        <div class="grid-left-headers">
+          <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div>
+          <div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div>
+        </div>
+
+        <!-- The Grid Area with Loading Screen Overlay -->
+        <div class="grid-container glass-panel">
+          <div id="grid" class="billdoku-grid"></div>
+          
+          <!-- Loading Overlay -->
+          <div id="loadingOverlay" class="generator-loading-overlay">
+            <div class="spinner"></div>
+            <div id="loadingText" class="loading-text">
+              Generating Unique 16x16 Grid...<br>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Running Dancing Links (DLX) solver</span>
+            </div>
+          </div>
+
+          <!-- Paused Overlay -->
+          <div id="pausedOverlay" class="generator-loading-overlay">
+            <div style="font-size: 3rem; animation: pulse 2s infinite;">⏸️</div>
+            <div class="loading-text" style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase;">
+              Game Paused
+            </div>
+            <button class="btn" onclick="togglePauseGame()" style="margin-top: 8px; padding: 4px 16px; font-size: 0.8rem; height: 32px;">
+              Resume Game
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keypad Panel (Styled with card-aqua-blue) -->
+      <div class="keypad-panel glass-panel card-aqua-blue">
+        <div id="keypadGrid" class="keypad-grid"></div>
+        
+        <!-- Action Row: Clue, Erase, Pause (Enforced side-by-side row) -->
+        <div class="keypad-actions">
+          <!-- Clue button -->
+          <button id="clueBtn" class="btn btn-secondary btn-small" onclick="toggleClueMode()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
+            <span>Clue</span>
+            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[H]</span>
+          </button>
+
+          <!-- Erase button -->
+          <button id="eraseBtn" class="btn btn-secondary btn-small" onclick="clearActiveCell()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
+            <span>Erase (pick cell)</span>
+            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Delete]</span>
+          </button>
+
+          <!-- Pause button -->
+          <button id="pauseBtn" class="btn btn-secondary btn-small" onclick="togglePauseGame()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
+            <span>Pause ⏸️</span>
+            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Console Log Status Bar -->
+      <div id="status" class="status-bar">System Ready. Choose difficulty and click 'Start 🏁' to begin.</div>
+    </div>
+
+  </div>
+
+  <!-- Solution Confirmation Modal -->
+  <div id="solutionModal" class="modal-overlay">
+    <div class="glass-panel modal-card card-aqua-blue">
+      <h3>Give Up?</h3>
+      <p>Are you sure you want to give up the previous Game and wants the Answers?</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="handleSolutionConfirm(true)">Yes</button>
+        <button class="btn btn-secondary" onclick="handleSolutionConfirm(false)">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solver and Application Scripts -->
+  <script src="js/solver.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
