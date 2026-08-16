@@ -69,9 +69,11 @@ window.onload = () => {
   loadTokensAndTickets();
   document.getElementById('alertToggleBtn').innerText = (assistanceMode === 'JUNIOR') ? 'ON' : 'OFF';
   
-  // Try to restore previous game, or generate a default one
+  // Try to restore previous game. If none, render empty board so they choose level and click Start.
   if (!loadGameState()) {
-    generateNewPuzzle();
+    renderBoard();
+    document.getElementById('statTimer').innerText = '00:00:00';
+    writeToConsoleLog("Welcome to Super-Sudoku-16! Select a difficulty and click 'Start 🏁' to begin.");
   }
 };
 
