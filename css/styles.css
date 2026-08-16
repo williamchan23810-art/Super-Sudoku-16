@@ -945,3 +945,46 @@ body.light-mode .generator-loading-overlay {
   outline-offset: -2px;
 }
 
+/* Elite Wallet Section */
+.elite-wallet-section {
+  transition: all 0.3s ease;
+}
+.elite-wallet-section .btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: var(--text-main) !important;
+}
+.elite-wallet-section .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+body.light-mode .elite-wallet-section {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+body.light-mode .elite-wallet-section .btn-secondary {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: var(--text-main) !important;
+}
+body.light-mode .elite-wallet-section .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Modal and overlay fixes */
+#tokenModal .btn-primary {
+  background: #fbbf24 !important;
+  border: 1.5px solid #d97706 !important;
+  color: #000000 !important;
+  font-weight: 700;
+}
+#tokenModal .btn-primary:hover {
+  background: #f59e0b !important;
+}
+#adPlayerTimer {
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  animation: pulse 1s infinite;
+}
+
+

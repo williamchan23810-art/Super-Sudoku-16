@@ -29,6 +29,26 @@
     <!-- LEFT PANEL: Game Controls & Settings (Consolidated) -->
     <div class="control-panel">
       <div class="glass-panel card-aqua-blue" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Elite Token & Ticket Dashboard -->
+        <div class="elite-wallet-section" style="background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 4px;">
+              🪙 Tokens: <strong id="tokenCountText" style="color: #fbbf24; font-size: 0.95rem;">5</strong>
+            </span>
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 4px;">
+              🎫 Daily Ticket: <strong id="dailyTicketText" style="color: #10b981; font-size: 0.95rem;">1/1</strong>
+            </span>
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-secondary btn-small" onclick="simulateWatchAd()" style="flex: 1; height: 24px; font-size: 0.65rem; padding: 2px;">
+              📺 Watch Ad (+1 Token)
+            </button>
+            <button class="btn btn-secondary btn-small" onclick="simulateBuyTokens()" style="flex: 1; height: 24px; font-size: 0.65rem; padding: 2px;">
+              💵 Buy 5 Tokens
+            </button>
+          </div>
+        </div>
+
         <h3>Player Settings</h3>
         
         <!-- Difficulty Select and Start next to each other -->
@@ -92,14 +112,17 @@
         </div>
 
         <!-- Row of Actions: Reset, Solution, New Game -->
-        <div class="bottom-actions-row">
-          <button id="resetBtn" class="btn btn-secondary" onclick="resetBoard()" title="Reset (Clear all)">
+        <div class="bottom-actions-row" style="display: flex; gap: 4px;">
+          <button id="undoBtn" class="btn btn-secondary" onclick="handleUndo()" title="Undo [Ctrl+Z]" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
+            Undo
+          </button>
+          <button id="resetBtn" class="btn btn-secondary" onclick="resetBoard()" title="Reset (Clear all)" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
             Reset
           </button>
-          <button id="solveBtn" class="btn btn-secondary" onclick="confirmShowSolution()" title="Solution">
+          <button id="solveBtn" class="btn btn-secondary" onclick="confirmShowSolution()" title="Solution" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
             Solution
           </button>
-          <button id="newGameBtn" class="btn btn-secondary" onclick="generateNewPuzzle()" title="New Game">
+          <button id="newGameBtn" class="btn btn-secondary" onclick="generateNewPuzzle()" title="New Game" style="flex: 1.2; padding: 4px; font-size: 0.75rem; height: 32px;">
             New Game
           </button>
         </div>
@@ -149,6 +172,32 @@
               Resume Game
             </button>
           </div>
+
+          <!-- Locked Overlay -->
+          <div id="lockedOverlay" class="generator-loading-overlay">
+            <div style="font-size: 3rem; animation: pulse 2s infinite;">🔒</div>
+            <div class="loading-text" id="lockedOverlayTitle" style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase;">
+              Time Expired
+            </div>
+            <div id="lockedOverlayMessage" style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0 16px 0; text-align: center; max-width: 80%;">
+              This puzzle has expired (1-hour limit). Spend 1 Token to add 1 more hour and resume.
+            </div>
+            <div style="display: flex; gap: 8px;" id="lockActionsArea">
+              <!-- Actions dynamic based on hour limit -->
+            </div>
+          </div>
+
+          <!-- Ad Player Overlay -->
+          <div id="adPlayerOverlay" class="generator-loading-overlay">
+            <div style="font-size: 3rem; animation: pulse 2s infinite;">📺</div>
+            <div class="loading-text" id="adPlayerTitle" style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase;">
+              Playing Ad
+            </div>
+            <div id="adPlayerTimer" style="font-size: 2rem; font-weight: 800; color: #fbbf24; margin: 10px 0;">15</div>
+            <div id="adPlayerMessage" style="font-size: 0.8rem; color: var(--text-muted); text-align: center; max-width: 85%;">
+              Please wait while the break ad finishes...
+            </div>
+          </div>
         </div>
       </div>
 
@@ -158,9 +207,9 @@
         
         <!-- Action Row: Clue, Erase, Pause (Enforced side-by-side row) -->
         <div class="keypad-actions">
-          <!-- Clue button -->
+          <!-- Notes button -->
           <button id="clueBtn" class="btn btn-secondary btn-small" onclick="toggleClueMode()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
-            <span>Clue</span>
+            <span>Notes</span>
             <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[H]</span>
           </button>
 
@@ -188,10 +237,22 @@
   <div id="solutionModal" class="modal-overlay">
     <div class="glass-panel modal-card card-aqua-blue">
       <h3>Give Up?</h3>
-      <p>Are you sure you want to give up the previous Game and wants the Answers?</p>
+      <p>Are you sure you want to give up the previous Game and get the Answers? This will terminate your game session permanently.</p>
       <div class="modal-actions">
         <button class="btn btn-danger" onclick="handleSolutionConfirm(true)">Yes</button>
         <button class="btn btn-secondary" onclick="handleSolutionConfirm(false)">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Confirmation Modal -->
+  <div id="tokenModal" class="modal-overlay">
+    <div class="glass-panel modal-card card-aqua-blue">
+      <h3>Spend 1 Token?</h3>
+      <p>You have already played your free daily game. Spend 1 Token 🪙 to unlock another game?</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="confirmSpendToken(true)">Spend 🪙</button>
+        <button class="btn btn-secondary" onclick="confirmSpendToken(false)">Cancel</button>
       </div>
     </div>
   </div>
