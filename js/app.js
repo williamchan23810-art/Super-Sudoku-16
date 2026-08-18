@@ -67,8 +67,17 @@ window.onload = () => {
   initButtonHoverHelp();
   
   loadTokensAndTickets();
-  document.getElementById('alertToggleBtn').innerText = (assistanceMode === 'JUNIOR') ? 'ON' : 'OFF';
   
+  const select = document.getElementById('difficultySelect');
+  if (select) {
+    select.addEventListener('change', updateDifficultySelectColor);
+    updateDifficultySelectColor();
+  }
+
+  updatePauseButtonUI();
+  updateToggleButtonsUI();
+  updateNotesButtonUI();
+
   // Try to restore previous game. If none, render empty board so they choose level and click Start.
   if (!loadGameState()) {
     renderBoard();
@@ -226,19 +235,17 @@ function renderKeypad() {
     
     const shortcut = i >= 10 ? String.fromCharCode(65 + (i - 10)) : i.toString();
     
-    // Wrap numbers 10-16 in circle in input pad
     if (i >= 10) {
       btn.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; height: 100%;">
-          <span class="number-circle" style="margin-bottom: 1px;">${getDisplayValue(i)}</span>
-          <span class="key-shortcut" style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; text-transform: uppercase;">[${shortcut}]</span>
+          <span style="font-size: 1.15rem; font-weight: 700; margin-bottom: 2px;">${getDisplayValue(i)}</span>
+          <span class="key-shortcut" style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; text-transform: uppercase;">${shortcut}</span>
         </div>
       `;
     } else {
       btn.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; height: 100%;">
-          <span style="font-size: 1.15rem; font-weight: 700; margin-bottom: 2px;">${getDisplayValue(i)}</span>
-          <span class="key-shortcut" style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; text-transform: uppercase;">[${shortcut}]</span>
+          <span style="font-size: 1.15rem; font-weight: 700;">${getDisplayValue(i)}</span>
         </div>
       `;
     }
@@ -263,12 +270,7 @@ function renderNotepad() {
     const btn = document.createElement('button');
     btn.className = 'notepad-btn';
     
-    // Wrap numbers 10-16 in circle inside notepad
-    if (i >= 10) {
-      btn.innerHTML = `<span class="number-circle">${getDisplayValue(i)}</span>`;
-    } else {
-      btn.innerText = getDisplayValue(i);
-    }
+    btn.innerText = getDisplayValue(i);
 
     // Toggle note on click
     btn.addEventListener('click', (e) => {
@@ -540,12 +542,7 @@ function showFloatingKeypad(e, r, c) {
     const btn = document.createElement('button');
     btn.classList.add('floating-key-btn');
     
-    // Numbers 10-16 in floating pad inside circle
-    if (i >= 10) {
-      btn.innerHTML = `<span class="number-circle">${getDisplayValue(i)}</span>`;
-    } else {
-      btn.innerText = getDisplayValue(i);
-    }
+    btn.innerText = getDisplayValue(i);
 
     btn.addEventListener('click', (ev) => {
       ev.stopPropagation();
@@ -781,7 +778,6 @@ function toggleClueMode(force = null) {
   if (btn) {
     if (clueMode) {
       btn.classList.add('clue-active');
-      btn.innerHTML = `<span>Notes (ON)</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[H]</span>`;
       // Convert normal selection to clue selection!
       if (selectedCell) {
         clueSelectedCells = [selectedCell];
@@ -792,7 +788,6 @@ function toggleClueMode(force = null) {
       writeToConsoleLog("Notes Mode ON: Drag to select cells, then press numbers to add pencil marks.");
     } else {
       btn.classList.remove('clue-active');
-      btn.innerHTML = `<span>Notes</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[H]</span>`;
       // Convert clue selection back to normal selection!
       if (clueSelectedCells.length > 0) {
         selectedCell = clueSelectedCells[clueSelectedCells.length - 1];
@@ -800,6 +795,7 @@ function toggleClueMode(force = null) {
       clueSelectedCells = [];
       writeToConsoleLog("Notes Mode deactivated.");
     }
+    updateNotesButtonUI();
   }
   renderHighlights();
   playChimpSound();
@@ -866,22 +862,10 @@ function renderCell(r, c) {
 
   if (isGiven) {
     cellEl.classList.add('given');
-    
-    // Wrap numbers 10-16 in a circle
-    if (val >= 10) {
-      cellEl.innerHTML = `<span class="number-circle">${getDisplayValue(val)}</span>`;
-    } else {
-      cellEl.innerText = getDisplayValue(val);
-    }
+    cellEl.innerText = getDisplayValue(val);
   } else if (val !== 0) {
     cellEl.classList.add('player-filled');
-    
-    // Wrap numbers 10-16 in a circle
-    if (val >= 10) {
-      cellEl.innerHTML = `<span class="number-circle">${getDisplayValue(val)}</span>`;
-    } else {
-      cellEl.innerText = getDisplayValue(val);
-    }
+    cellEl.innerHTML = `<span class="player-circle">${getDisplayValue(val)}</span>`;
   } else {
     // Render pencil marks notes
     const hasNotes = notesState[r][c].some(n => n === true);
@@ -919,8 +903,7 @@ function renderBoard() {
 
 function toggleAlert() {
   assistanceMode = (assistanceMode === 'JUNIOR') ? 'MASTER' : 'JUNIOR';
-  const btn = document.getElementById('alertToggleBtn');
-  btn.innerText = (assistanceMode === 'JUNIOR') ? 'ON' : 'OFF';
+  updateToggleButtonsUI();
   
   validateBoardConflicts();
   
@@ -1042,8 +1025,8 @@ function showProgressAlert(msg) {
 
 function toggleThemeMode() {
   const body = document.body;
-  const isLight = body.classList.toggle('light-mode');
-  document.getElementById('themeToggleBtn').innerText = isLight ? 'LIGHT' : 'DARK';
+  body.classList.toggle('light-mode');
+  updateToggleButtonsUI();
   saveGameState();
 }
 
@@ -1078,41 +1061,36 @@ function updateDocNumDisplay() {
   }
 }
 
-function generateNewPuzzle(forceSpendToken = false) {
+function isGameInProgress() {
+  if (isGameOver || !currentDocNum || currentDocNum === '-') return false;
+  const elapsed = Math.floor((Date.now() - puzzleStartTimestamp) / 1000);
+  
+  let hasPlayerEdits = false;
+  for (let r = 0; r < 16; r++) {
+    for (let c = 0; c < 16; c++) {
+      if (boardState[r][c] !== 0 && !givenMask[r][c]) {
+        hasPlayerEdits = true;
+        break;
+      }
+    }
+  }
+  return hasPlayerEdits || elapsed > 15;
+}
+
+function generateNewPuzzle(force = false) {
   if (isPaused) {
     isPaused = false;
     const pausedOverlay = document.getElementById('pausedOverlay');
     if (pausedOverlay) pausedOverlay.classList.remove('active');
-    const pauseBtn = document.getElementById('pauseBtn');
-    if (pauseBtn) pauseBtn.innerText = 'Pause ⏸️';
+    updatePauseButtonUI();
   }
 
-  // Check Daily Ticket & Token validation
-  const today = getTodayString();
-  const ticketUsed = lastTicketDate === today;
-
-  if (ticketUsed && !forceSpendToken) {
-    // Show Token Modal
-    const modal = document.getElementById('tokenModal');
-    if (modal) modal.classList.add('active');
+  if (!force && isGameInProgress()) {
+    logTelemetrySession(false, false);
+    showFeedbackModal(() => {
+      generateNewPuzzle(true);
+    });
     return;
-  }
-
-  if (forceSpendToken) {
-    if (tokens >= 1) {
-      tokens -= 1;
-      saveTokens();
-      writeToConsoleLog("Spent 1 Token 🪙 to play an extra game!");
-    } else {
-      alert("Not enough tokens! Please watch an ad to earn tokens or buy some.");
-      return;
-    }
-  } else {
-    // Consume daily free ticket
-    lastTicketDate = today;
-    localStorage.setItem('supersudoku16_last_ticket_date', lastTicketDate);
-    updateWalletUI();
-    writeToConsoleLog("Daily free ticket used! Good luck!");
   }
 
   // Reset Lock/GameOver states
@@ -1127,7 +1105,11 @@ function generateNewPuzzle(forceSpendToken = false) {
   adsShown = { 900: false, 1800: false, 2700: false, 4500: false, 5400: false, 6300: false };
 
   const select = document.getElementById('difficultySelect');
-  currentDifficulty = select.value;
+  currentDifficulty = select ? select.value : 'intermediate';
+
+  // Apply background theme
+  document.body.classList.remove('theme-easy', 'theme-intermediate', 'theme-hard', 'theme-expert');
+  document.body.classList.add(`theme-${currentDifficulty}`);
 
   stopTimer();
   resetTimer();
@@ -1173,8 +1155,8 @@ function generateNewPuzzle(forceSpendToken = false) {
       if (startBtn) {
         startBtn.disabled = true;
         startBtn.classList.add('btn-progress');
-        startBtn.innerText = 'In Progress';
       }
+      setStartButtonText('In Progress');
 
       saveGameState();
     } else {
@@ -1186,7 +1168,7 @@ function generateNewPuzzle(forceSpendToken = false) {
       if (currentDifficulty === 'easy') targetClues = 142;
       else if (currentDifficulty === 'intermediate') targetClues = 112;
       else if (currentDifficulty === 'hard') targetClues = 90;
-      else if (currentDifficulty === 'master') targetClues = 80;
+      else if (currentDifficulty === 'expert') targetClues = 80;
 
       const generator = dlxEngine.generatePuzzleAsync(targetClues);
       
@@ -1224,8 +1206,8 @@ function generateNewPuzzle(forceSpendToken = false) {
           if (startBtn) {
             startBtn.disabled = true;
             startBtn.classList.add('btn-progress');
-            startBtn.innerText = 'In Progress';
           }
+          setStartButtonText('In Progress');
 
           saveGameState();
         }
@@ -1321,8 +1303,8 @@ function solvePuzzleAnimate() {
   if (startBtn) {
     startBtn.disabled = false;
     startBtn.classList.remove('btn-progress');
-    startBtn.innerText = 'Start 🏁';
   }
+  setStartButtonText('Start 🏁');
 
   if (cellsToFill.length === 0) {
     writeToConsoleLog("Game Over: Solution revealed (Board was solved).");
@@ -1381,16 +1363,14 @@ function togglePauseGame() {
     isPaused = false;
     const pausedOverlay = document.getElementById('pausedOverlay');
     if (pausedOverlay) pausedOverlay.classList.remove('active');
-    const pauseBtn = document.getElementById('pauseBtn');
-    if (pauseBtn) pauseBtn.innerHTML = '<span>Pause ⏸️</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>';
+    updatePauseButtonUI();
     startTimer();
     writeToConsoleLog("Game Resumed.");
   } else {
     isPaused = true;
     const pausedOverlay = document.getElementById('pausedOverlay');
     if (pausedOverlay) pausedOverlay.classList.add('active');
-    const pauseBtn = document.getElementById('pauseBtn');
-    if (pauseBtn) pauseBtn.innerHTML = '<span>Resume ▶️</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>';
+    updatePauseButtonUI();
     stopTimer();
     writeToConsoleLog("Game Paused.");
   }
@@ -1404,28 +1384,7 @@ function startTimer() {
     if (isPaused || isLocked || isAdPlaying || isGameOver) return;
 
     const elapsedTotal = Math.floor((Date.now() - puzzleStartTimestamp) / 1000);
-    const timeLeft = (currentUnlockedHours * 3600) - elapsedTotal;
-
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      document.getElementById('statTimer').innerText = '00:00:00';
-      lockGame();
-      return;
-    }
-
-    document.getElementById('statTimer').innerText = formatTimer(timeLeft);
-
-    // Trigger 15-minute ad breaks at 15m (900), 30m (1800), 45m (2700) for Hour 1,
-    // and 75m (4500), 90m (5400), 105m (6300) for Hour 2.
-    const thresholds = [900, 1800, 2700, 4500, 5400, 6300];
-    for (let t of thresholds) {
-      if (elapsedTotal >= t && !adsShown[t]) {
-        adsShown[t] = true;
-        saveGameState();
-        triggerBreakAd(15);
-        break; // Trigger only one ad at a time
-      }
-    }
+    document.getElementById('statTimer').innerText = formatTimer(elapsedTotal);
 
     if (elapsedTotal % 10 === 0) saveGameState();
   }, 1000);
@@ -1437,7 +1396,7 @@ function stopTimer() {
 
 function resetTimer() {
   puzzleStartTimestamp = Date.now();
-  document.getElementById('statTimer').innerText = '01:00:00';
+  document.getElementById('statTimer').innerText = '00:00:00';
 }
 
 function formatTimer(secs) {
@@ -1509,45 +1468,43 @@ function loadGameState() {
 
     // Load monetization/lock states
     puzzleStartTimestamp = state.puzzleStartTimestamp || Date.now();
-    currentUnlockedHours = state.currentUnlockedHours || 1;
-    adsShown = state.adsShown || { 900: false, 1800: false, 2700: false, 4500: false, 5400: false, 6300: false };
-    isLocked = state.isLocked || false;
+    currentUnlockedHours = 1;
+    adsShown = { 900: false, 1800: false, 2700: false, 4500: false, 5400: false, 6300: false };
+    isLocked = false;
     isGameOver = state.isGameOver || false;
     
     updateDocNumDisplay();
 
-    // Check expiration on load
-    const elapsedTotal = Math.floor((Date.now() - puzzleStartTimestamp) / 1000);
-    const timeLeft = (currentUnlockedHours * 3600) - elapsedTotal;
-    if (timeLeft <= 0) {
-      isLocked = true;
-    }
-
     // Restore Paused State UI / Overlay
     const pausedOverlay = document.getElementById('pausedOverlay');
-    const pauseBtn = document.getElementById('pauseBtn');
     if (isPaused) {
       if (pausedOverlay) pausedOverlay.classList.add('active');
-      if (pauseBtn) pauseBtn.innerHTML = '<span>Resume ▶️</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>';
+      updatePauseButtonUI();
       stopTimer();
     } else {
       if (pausedOverlay) pausedOverlay.classList.remove('active');
-      if (pauseBtn) pauseBtn.innerHTML = '<span>Pause ⏸️</span><span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>';
+      updatePauseButtonUI();
     }
 
     // Apply Light Theme State
     if (state.isLightMode) {
       document.body.classList.add('light-mode');
-      document.getElementById('themeToggleBtn').innerText = 'LIGHT';
     } else {
       document.body.classList.remove('light-mode');
-      document.getElementById('themeToggleBtn').innerText = 'DARK';
     }
 
-    document.getElementById('difficultySelect').value = currentDifficulty;
+    const select = document.getElementById('difficultySelect');
+    if (select) {
+      select.value = currentDifficulty;
+      updateDifficultySelectColor();
+    }
     
-    document.getElementById('alertToggleBtn').innerText = (assistanceMode === 'JUNIOR') ? 'ON' : 'OFF';
-    document.getElementById('soundToggleBtn').innerText = soundEnabled ? 'ON' : 'OFF';
+    // Apply level background theme
+    document.body.classList.remove('theme-easy', 'theme-intermediate', 'theme-hard', 'theme-expert');
+    document.body.classList.add(`theme-${currentDifficulty}`);
+    
+    updateToggleButtonsUI();
+    updateNotesButtonUI();
     document.getElementById('timerToggleBtn').innerText = timerVisible ? 'HIDE' : 'SHOW';
     
     const timerEl = document.getElementById('statTimer');
@@ -1567,21 +1524,23 @@ function loadGameState() {
     }
     const startBtn = document.getElementById('generateBtn');
     if (cellsFilled > 0 && cellsFilled < totalCells && !isLocked && !isGameOver) {
-      startBtn.disabled = true;
-      startBtn.classList.add('btn-progress');
-      startBtn.innerText = 'In Progress';
+      if (startBtn) {
+        startBtn.disabled = true;
+        startBtn.classList.add('btn-progress');
+      }
+      setStartButtonText('In Progress');
     } else {
-      startBtn.disabled = false;
-      startBtn.classList.remove('btn-progress');
-      startBtn.innerText = 'Start 🏁';
+      if (startBtn) {
+        startBtn.disabled = false;
+        startBtn.classList.remove('btn-progress');
+      }
+      setStartButtonText('Start 🏁');
     }
 
     renderBoard();
     renderKeypad();
 
-    if (isLocked) {
-      lockGame();
-    } else if (!isPaused) {
+    if (!isPaused) {
       startTimer();
       writeToConsoleLog("Autosave Restored: Previous game state recovered.");
     } else {
@@ -1602,7 +1561,7 @@ function loadGameState() {
 
 function toggleSound() {
   soundEnabled = !soundEnabled;
-  document.getElementById('soundToggleBtn').innerText = soundEnabled ? 'ON' : 'OFF';
+  updateToggleButtonsUI();
   if (soundEnabled) {
     playChimpSound();
   }
@@ -1735,11 +1694,21 @@ function checkVictory() {
   writeToConsoleLog("🎉 CONGRATULATIONS! You solved the Super-Sudoku-16 puzzle! 🎉");
   
   const startBtn = document.getElementById('generateBtn');
-  startBtn.disabled = false;
-  startBtn.classList.remove('btn-progress');
-  startBtn.innerText = 'Start 🏁';
+  if (startBtn) {
+    startBtn.disabled = false;
+    startBtn.classList.remove('btn-progress');
+  }
+  setStartButtonText('Start 🏁');
 
   localStorage.removeItem('supersudoku16_savestate'); 
+
+  // Log telemetry victory session
+  logTelemetrySession(true, true);
+
+  // Trigger feedback modal after 3 seconds of confetti celebration
+  setTimeout(() => {
+    showFeedbackModal();
+  }, 3000);
 }
 
 // Particle confetti on canvas
@@ -1841,7 +1810,7 @@ function handleSolutionConfirm(confirmed) {
 
 function initButtonHoverHelp() {
   const hoverTexts = {
-    'difficultySelect': "Select the difficulty level: Easy, Medium, Hard, or Master.",
+    'difficultySelect': "Select the difficulty level: Easy, Intermediate, Hard, or Expert.",
     'generateBtn': "Start a new game with the selected difficulty.",
     'alertToggleBtn': "Alert mode: Turn off will not alert you for any Conflicts.",
     'soundToggleBtn': "Toggle audio sound effects on or off.",
@@ -1850,8 +1819,9 @@ function initButtonHoverHelp() {
     'solveBtn': "Reveal the full solution for the current puzzle.",
     'newGameBtn': "Abandon the current game and start a new one.",
     'undoBtn': "Undo the last entry or pencil mark change.",
-    'eraseBtn': "Clear the value or clues in the currently selected cell.",
-    'pauseBtn': "Pause or resume the game timer and grid interaction.",
+    'clueBtn': "Notes",
+    'eraseBtn': "Erase",
+    'pauseBtn': "Pause",
     'timerToggleBtn': "Show or hide the game timer."
   };
 
@@ -1874,37 +1844,17 @@ function initButtonHoverHelp() {
    14. Elite Wallet, Ad & Lock Systems
    ========================================================================== */
 
+/* ==========================================================================
+   14. Elite Wallet, Ad & Lock Systems (Stubbed for Beta Free Trial)
+   ========================================================================== */
+
 function loadTokensAndTickets() {
-  const t = localStorage.getItem('supersudoku16_tokens');
-  if (t !== null) tokens = parseInt(t, 10);
-  else {
-    tokens = 5; // Default starter tokens
-    saveTokens();
-  }
-
-  const td = localStorage.getItem('supersudoku16_last_ticket_date');
-  if (td !== null) lastTicketDate = td;
-  
-  updateWalletUI();
+  tokens = 9999;
+  lastTicketDate = '';
 }
 
-function saveTokens() {
-  localStorage.setItem('supersudoku16_tokens', tokens);
-  updateWalletUI();
-}
-
-function updateWalletUI() {
-  const tokenEl = document.getElementById('tokenCountText');
-  if (tokenEl) tokenEl.innerText = tokens;
-  
-  const ticketEl = document.getElementById('dailyTicketText');
-  if (ticketEl) {
-    const today = getTodayString();
-    const ticketUsed = lastTicketDate === today;
-    ticketEl.innerText = ticketUsed ? "0/1" : "1/1";
-    ticketEl.style.color = ticketUsed ? "var(--text-muted)" : "#10b981";
-  }
-}
+function saveTokens() {}
+function updateWalletUI() {}
 
 function getTodayString() {
   const d = new Date();
@@ -1914,203 +1864,301 @@ function getTodayString() {
 function confirmSpendToken(spend) {
   const modal = document.getElementById('tokenModal');
   if (modal) modal.classList.remove('active');
-  
-  if (spend) {
-    generateNewPuzzle(true);
-  }
 }
 
-function simulateWatchAd() {
-  if (isAdPlaying) return;
-  playSimulatedAd(30, () => {
-    tokens += 1;
-    saveTokens();
-    writeToConsoleLog("Ad completed! You earned 1 Token 🪙.");
-  });
-}
-
-function simulateBuyTokens() {
-  tokens += 5;
-  saveTokens();
-  writeToConsoleLog("Purchase successful! Added 5 Tokens 🪙 to your wallet.");
-}
+function simulateWatchAd() {}
+function simulateBuyTokens() {}
 
 function playSimulatedAd(durationSeconds, onComplete) {
-  isAdPlaying = true;
-  stopTimer();
-  deselectCell();
-  hideFloatingKeypad();
-  
-  const adOverlay = document.getElementById('adPlayerOverlay');
-  const adTimer = document.getElementById('adPlayerTimer');
-  const adTitle = document.getElementById('adPlayerTitle');
-  const adMessage = document.getElementById('adPlayerMessage');
-  
-  if (adOverlay) adOverlay.classList.add('active');
-  
-  if (durationSeconds === 15) {
-    if (adTitle) adTitle.innerText = "Health Break Ad";
-    if (adMessage) adMessage.innerText = "Take a quick 15-second rest for your eyes. Rest your focus!";
-  } else if (durationSeconds === 30) {
-    if (adTitle) adTitle.innerText = "Rewarded Ad";
-    if (adMessage) adMessage.innerText = "Watch this short video to earn 1 free Token!";
-  } else if (durationSeconds === 60) {
-    if (adTitle) adTitle.innerText = "Extension Ad";
-    if (adMessage) adMessage.innerText = "Watch this 60-second ad to unlock Hour 2 of this puzzle for free!";
-  }
-  
-  let remaining = durationSeconds;
-  if (adTimer) adTimer.innerText = remaining;
-  
-  const interval = setInterval(() => {
-    remaining--;
-    if (adTimer) adTimer.innerText = remaining;
-    if (remaining <= 0) {
-      clearInterval(interval);
-      if (adOverlay) adOverlay.classList.remove('active');
-      isAdPlaying = false;
-      if (onComplete) onComplete();
-      
-      // Resume game timer if the game is not locked, paused, or game over
-      if (!isLocked && !isPaused && !isGameOver) {
-        startTimer();
-      }
-    }
-  }, 1000);
+  if (onComplete) onComplete();
 }
 
-function lockGame() {
-  isLocked = true;
-  stopTimer();
-  deselectCell();
-  hideFloatingKeypad();
+function lockGame() {}
+function unlockGameWithToken() {}
+function simulateWatchExtensionAd() {}
+function abandonLockedGame() {}
+function triggerBreakAd(duration) {}
+
+
+/* ==========================================================================
+   15. Telemetry & Feedback Systems
+   ========================================================================== */
+
+let feedbackCallback = null;
+
+function logTelemetrySession(completed, isVictory) {
+  if (!currentDocNum || currentDocNum === '-') return;
   
-  const lockedOverlay = document.getElementById('lockedOverlay');
-  const messageEl = document.getElementById('lockedOverlayMessage');
-  const actionsEl = document.getElementById('lockActionsArea');
-  
-  if (lockedOverlay) lockedOverlay.classList.add('active');
-  
-  const startBtn = document.getElementById('generateBtn');
-  if (startBtn) {
-    startBtn.disabled = false;
-    startBtn.classList.remove('btn-progress');
-    startBtn.innerText = 'Start 🏁';
+  const elapsed = Math.floor((Date.now() - puzzleStartTimestamp) / 1000);
+  const telemetryData = {
+    level: currentDifficulty,
+    docNum: currentDocNum,
+    timeSpentSeconds: elapsed,
+    timeSpentFormatted: formatTimer(elapsed),
+    completed: completed,
+    isVictory: isVictory,
+    timestamp: new Date().toISOString()
+  };
+
+  // 1. Save to LocalStorage
+  let localList = [];
+  try {
+    const existing = localStorage.getItem('supersudoku16_telemetry_data');
+    if (existing) localList = JSON.parse(existing);
+  } catch (e) {
+    console.error("Failed to parse local telemetry data", e);
   }
-  
-  if (currentUnlockedHours === 1) {
-    if (messageEl) messageEl.innerText = "Hour 1 expired (1-hour limit). Spend 1 Token 🪙 or watch a 60-second ad to unlock Hour 2.";
-    if (actionsEl) {
-      actionsEl.innerHTML = `
-        <button class="btn btn-primary" onclick="simulateWatchExtensionAd()" style="padding: 4px 16px; font-size: 0.8rem; height: 32px;">
-          📺 Watch Ad (60s)
-        </button>
-        <button class="btn" onclick="unlockGameWithToken()" style="padding: 4px 16px; font-size: 0.8rem; height: 32px;">
-          Spend 1 Token 🪙
-        </button>
-        <button class="btn btn-secondary" onclick="abandonLockedGame()" style="padding: 4px 16px; font-size: 0.8rem; height: 32px;">
-          Abandon
-        </button>
-      `;
-    }
-  } else {
-    // Hour 2+ locks require compulsory Token payment
-    if (messageEl) {
-      if (currentUnlockedHours === 2) {
-        messageEl.innerText = "Hour 2 expired. Accessing Hour 3+ requires a compulsory Token payment.";
-      } else {
-        messageEl.innerText = `Hour ${currentUnlockedHours} expired. Unlock Hour ${currentUnlockedHours + 1} with 1 Token 🪙.`;
-      }
-    }
-    if (actionsEl) {
-      actionsEl.innerHTML = `
-        <button class="btn" onclick="unlockGameWithToken()" style="padding: 4px 16px; font-size: 0.8rem; height: 32px;">
-          Spend 1 Token 🪙
-        </button>
-        <button class="btn btn-secondary" onclick="abandonLockedGame()" style="padding: 4px 16px; font-size: 0.8rem; height: 32px;">
-          Abandon
-        </button>
-      `;
-    }
-  }
-  
-  saveGameState();
+  localList.push(telemetryData);
+  localStorage.setItem('supersudoku16_telemetry_data', JSON.stringify(localList));
+
+  // 2. Post to Server
+  fetch('/api/telemetry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(telemetryData)
+  })
+  .then(res => res.json())
+  .then(data => console.log("Telemetry session logged successfully:", data))
+  .catch(err => console.warn("Failed to POST telemetry to server:", err));
 }
 
-function unlockGameWithToken() {
-  if (tokens >= 1) {
-    tokens -= 1;
-    saveTokens();
-    
-    currentUnlockedHours += 1;
-    isLocked = false;
-    
-    const lockedOverlay = document.getElementById('lockedOverlay');
-    if (lockedOverlay) lockedOverlay.classList.remove('active');
-    
-    const startBtn = document.getElementById('generateBtn');
-    if (startBtn) {
-      startBtn.disabled = true;
-      startBtn.classList.add('btn-progress');
-      startBtn.innerText = 'In Progress';
-    }
-    
-    writeToConsoleLog(`Spent 1 Token. Unlocked Hour ${currentUnlockedHours}!`);
-    playChimpSound();
-    startTimer();
-    saveGameState();
-  } else {
-    alert("Not enough tokens! Please watch an ad to earn tokens or buy some.");
+function showFeedbackModal(onComplete = null) {
+  feedbackCallback = onComplete;
+  
+  const suggInput = document.getElementById('feedbackSuggestions');
+  if (suggInput) suggInput.value = '';
+  
+  const modal = document.getElementById('feedbackModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeFeedbackModal(skipped = false) {
+  const modal = document.getElementById('feedbackModal');
+  if (modal) modal.classList.remove('active');
+  
+  if (feedbackCallback) {
+    const cb = feedbackCallback;
+    feedbackCallback = null;
+    cb(skipped);
   }
 }
 
-function simulateWatchExtensionAd() {
-  if (isAdPlaying) return;
-  playSimulatedAd(60, () => {
-    currentUnlockedHours = 2;
-    isLocked = false;
-    
-    const lockedOverlay = document.getElementById('lockedOverlay');
-    if (lockedOverlay) lockedOverlay.classList.remove('active');
-    
-    const startBtn = document.getElementById('generateBtn');
-    if (startBtn) {
-      startBtn.disabled = true;
-      startBtn.classList.add('btn-progress');
-      startBtn.innerText = 'In Progress';
-    }
-    
-    writeToConsoleLog("Watched extension ad. Unlocked Hour 2!");
-    playChimpSound();
-    startTimer();
-    saveGameState();
-  });
+function handleFeedbackSubmit(event) {
+  event.preventDefault();
+  
+  const form = event.target;
+  const formData = new FormData(form);
+  
+  const elapsed = Math.floor((Date.now() - puzzleStartTimestamp) / 1000);
+  
+  const feedbackData = {
+    level: currentDifficulty,
+    docNum: currentDocNum,
+    timeSpentSeconds: elapsed,
+    timeSpentFormatted: formatTimer(elapsed),
+    suggestions: formData.get('suggestions'),
+    timestamp: new Date().toISOString()
+  };
+
+  // 1. Save to LocalStorage
+  let localList = [];
+  try {
+    const existing = localStorage.getItem('supersudoku16_feedback_data');
+    if (existing) localList = JSON.parse(existing);
+  } catch (e) {
+    console.error("Failed to parse local feedback data", e);
+  }
+  localList.push(feedbackData);
+  localStorage.setItem('supersudoku16_feedback_data', JSON.stringify(localList));
+
+  // 2. Post to Server
+  fetch('/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(feedbackData)
+  })
+  .then(res => res.json())
+  .then(data => console.log("Feedback submitted successfully:", data))
+  .catch(err => console.warn("Failed to POST feedback to server:", err));
+
+  writeToConsoleLog("Thank you for your feedback!");
+  closeFeedbackModal(false);
 }
 
-function abandonLockedGame() {
-  isLocked = false;
-  const lockedOverlay = document.getElementById('lockedOverlay');
-  if (lockedOverlay) lockedOverlay.classList.remove('active');
+function exportFeedbackData(event) {
+  if (event) event.preventDefault();
   
+  const feedbackStr = localStorage.getItem('supersudoku16_feedback_data') || '[]';
+  const telemetryStr = localStorage.getItem('supersudoku16_telemetry_data') || '[]';
+  
+  try {
+    const feedbackList = JSON.parse(feedbackStr);
+    const telemetryList = JSON.parse(telemetryStr);
+    
+    const combinedData = {
+      feedback: feedbackList,
+      telemetry: telemetryList,
+      exportTimestamp: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(combinedData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sudoku16_data_export_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    writeToConsoleLog("Data export completed successfully.");
+  } catch (e) {
+    alert("Failed to export data: " + e.message);
+  }
+}
+
+function updateDifficultySelectColor() {
+  const select = document.getElementById('difficultySelect');
+  if (!select) return;
+  select.classList.remove('level-easy', 'level-intermediate', 'level-hard', 'level-expert');
+  select.classList.add(`level-${select.value}`);
+}
+
+function resetToFirstPage() {
+  if (isPaused) {
+    isPaused = false;
+    const pausedOverlay = document.getElementById('pausedOverlay');
+    if (pausedOverlay) pausedOverlay.classList.remove('active');
+    updatePauseButtonUI();
+  }
+
+  if (isGameInProgress()) {
+    logTelemetrySession(false, false);
+  }
+
+  // Clear save state
   localStorage.removeItem('supersudoku16_savestate');
+
+  // Reset states
+  isLocked = false;
+  isGameOver = false;
+  currentDocNum = '-';
   
-  resetTimer();
+  // Clear board
   boardState = Array(16).fill(0).map(() => Array(16).fill(0));
+  solutionState = Array(16).fill(0).map(() => Array(16).fill(0));
+  for (let r = 0; r < 16; r++) {
+    for (let c = 0; c < 16; c++) {
+      givenMask[r][c] = false;
+      notesState[r][c].fill(false);
+    }
+  }
+
+  stopTimer();
+  resetTimer();
+  deselectCell();
+  hideFloatingKeypad();
+  stopConfetti();
+
   renderBoard();
-  
+  updateDocNumDisplay();
+
   const startBtn = document.getElementById('generateBtn');
   if (startBtn) {
     startBtn.disabled = false;
-    startBtn.innerText = 'Start 🏁';
     startBtn.classList.remove('btn-progress');
   }
-  
-  writeToConsoleLog("Game abandoned. Click Start to play a new game.");
+  setStartButtonText('Start 🏁');
+
+  // Reset page theme backgrounds
+  document.body.classList.remove('theme-easy', 'theme-intermediate', 'theme-hard', 'theme-expert');
+
+  writeToConsoleLog("Welcome to Super-Sudoku-16! Select a difficulty and click 'Start 🏁' to begin.");
+  playChimpSound();
 }
 
-function triggerBreakAd(duration) {
-  playSimulatedAd(duration, () => {
-    writeToConsoleLog("Break ad completed. Resume playing!");
-    playChimpSound();
-  });
+function updateToggleButtonsUI() {
+  const alertBtn = document.getElementById('alertToggleBtn');
+  if (alertBtn) {
+    alertBtn.innerText = (assistanceMode === 'JUNIOR') ? 'ON' : 'OFF';
+    if (assistanceMode === 'JUNIOR') {
+      alertBtn.className = 'btn btn-on alert-toggle-btn';
+    } else {
+      alertBtn.className = 'btn btn-off alert-toggle-btn';
+    }
+  }
+
+  const soundBtn = document.getElementById('soundToggleBtn');
+  if (soundBtn) {
+    soundBtn.innerText = soundEnabled ? 'ON' : 'OFF';
+    if (soundEnabled) {
+      soundBtn.className = 'btn btn-on sound-toggle-btn';
+    } else {
+      soundBtn.className = 'btn btn-off sound-toggle-btn';
+    }
+  }
+
+  const themeBtn = document.getElementById('themeToggleBtn');
+  if (themeBtn) {
+    const isLight = document.body.classList.contains('light-mode');
+    themeBtn.innerText = isLight ? 'LIGHT' : 'DARK';
+    if (isLight) {
+      themeBtn.className = 'btn btn-on theme-toggle-btn';
+    } else {
+      themeBtn.className = 'btn btn-off theme-toggle-btn';
+    }
+  }
+}
+
+function updatePauseButtonUI() {
+  const pauseBtn = document.getElementById('pauseBtn');
+  if (!pauseBtn) return;
+  if (isPaused) {
+    pauseBtn.innerHTML = `
+      <svg width="28" height="28" viewBox="0 0 100 100">
+        <path d="M 30 15 L 85 50 L 30 85 Z" fill="#86efac" stroke="#166534" stroke-width="5" stroke-linejoin="round" />
+      </svg>
+    `;
+  } else {
+    pauseBtn.innerHTML = `
+      <svg width="28" height="28" viewBox="0 0 100 100">
+        <rect x="25" y="15" width="16" height="70" fill="#93c5fd" stroke="#1e3a8a" stroke-width="5" rx="6" />
+        <rect x="58" y="15" width="16" height="70" fill="#93c5fd" stroke="#1e3a8a" stroke-width="5" rx="6" />
+      </svg>
+    `;
+  }
+}
+
+function updateNotesButtonUI() {
+  const btn = document.getElementById('clueBtn');
+  if (!btn) return;
+  const text = clueMode ? "Notes (ON)" : "Notes";
+  btn.innerHTML = `
+    <div style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 100%;">
+      <svg width="24" height="24" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <g transform="rotate(-15 50 50)">
+          <!-- Pencil Body (Yellow) -->
+          <path d="M 25 75 L 75 25 L 85 35 L 35 85 Z" fill="#eab308" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+          <!-- Eraser Metal Band (Silver) -->
+          <path d="M 75 25 L 80 20 L 90 30 L 85 35 Z" fill="#94a3b8" stroke="#475569" stroke-width="4" stroke-linejoin="round"/>
+          <!-- Eraser (Pink) -->
+          <path d="M 80 20 L 85 15 L 95 25 L 90 30 Z" fill="#ec4899" stroke="#9d174d" stroke-width="4"/>
+          <!-- Tip Wood (Beige) -->
+          <path d="M 25 75 L 15 85 L 20 90 L 35 85 Z" fill="#fed7aa" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+          <!-- Graphite Tip (Black) -->
+          <path d="M 15 85 L 10 90 L 20 90 Z" fill="#000000"/>
+        </g>
+      </svg>
+      <span style="font-size: 0.85rem; font-weight: 700; line-height: 1; white-space: nowrap;">${text}</span>
+    </div>
+  `;
+}
+
+function setStartButtonText(text) {
+  const el = document.getElementById('generateBtnText');
+  if (el) {
+    el.innerText = text;
+  } else {
+    const startBtn = document.getElementById('generateBtn');
+    if (startBtn) startBtn.innerText = text;
+  }
 }

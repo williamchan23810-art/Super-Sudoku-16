@@ -3,3 +3,5 @@ __pycache__/
 *.log
 .DS_Store
 node_modules/
+telemetry_logs.json
+feedback_responses.json

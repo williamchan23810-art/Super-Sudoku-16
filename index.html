@@ -18,122 +18,75 @@
   <!-- Confetti Canvas for Victory Animation -->
   <canvas id="confetti-canvas"></canvas>
 
-  <header>
-    <!-- Header with custom logo icon -->
-    <img src="assets/icon.png" id="appIcon" alt="Super-Sudoku-16 Logo">
-    <p>Created by WILLIAMHCHANSTUDIO</p>
+
+  <!-- Header on very top -->
+  <header style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 40px; margin-bottom: 15px; width: 100%; text-align: center;">
+    <!-- Title lockup (dead center of viewport) -->
+    <div style="display: flex; flex-direction: row; align-items: baseline; gap: 6px; line-height: 1.1;">
+      <span style="font-size: 0.8rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; opacity: 0.5; margin-bottom: 2px;">SUPER</span>
+      <span style="font-size: 2.2rem; letter-spacing: 0.03em; font-family: 'Uncial Antiqua', cursive; display: inline-block;">
+        su<span style="display: inline-block; transform: scaleY(1.8); transform-origin: bottom; margin: 0 -1px 0 -2px;">d</span>o<span style="display: inline-block; transform: scaleY(1.45); transform-origin: bottom; margin: 0 0 0 -1px;">k</span>u
+      </span>
+      <span style="font-size: 2.2rem; font-family: 'Uncial Antiqua', cursive; font-weight: normal; margin-left: 4px;">16</span>
+      <span class="beta-badge" style="margin-left: 6px; font-family: var(--font-sans); font-weight: 800; font-size: 0.55rem; padding: 2px 4px; border-radius: 4px;">BETA</span>
+    </div>
+    <!-- Export feedback link positioned absolutely so it doesn't affect center alignment of title -->
+    <a href="#" onclick="exportFeedbackData(event)" id="exportFeedbackLink" style="position: absolute; right: 10px; top: 15px; color: var(--accent-color); text-decoration: underline; font-weight: 600; font-size: 0.72rem;">Export Log</a>
+    
+    <!-- 3 boxes row (Level, Start, Time Clock) aligned on same level and same width -->
+    <div style="display: flex; gap: 8px; width: 100%; max-width: 530px; justify-content: center; margin-top: 15px;">
+      <!-- Box 1: Level Select -->
+      <div style="flex: 1; min-width: 0;">
+        <select id="difficultySelect" style="width: 100%; height: 36px; font-size: 0.8rem; padding: 0 8px; border-radius: 6px; border: 1.5px solid rgba(6, 182, 212, 0.25); background: rgba(255,255,255,0.05); color: var(--text-main); font-weight: 700; text-align: center;">
+          <option value="easy">Level: Easy</option>
+          <option value="intermediate" selected>Level: Intermediate</option>
+          <option value="hard">Level: Hard</option>
+          <option value="expert">Level: Expert</option>
+        </select>
+      </div>
+      <!-- Box 2: Start / In Progress Button -->
+      <div style="flex: 1; min-width: 0;">
+        <button id="generateBtn" class="btn" style="width: 100%; height: 36px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; font-weight: 700; border-radius: 6px;" onclick="generateNewPuzzle()">
+          <!-- Cartoon Clock SVG merged inside -->
+          <svg width="18" height="18" viewBox="0 0 100 100" style="flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));">
+            <circle cx="50" cy="55" r="30" fill="#e2e8f0" stroke="#1e293b" stroke-width="4"/>
+            <path d="M 28 32 A 10 10 0 0 1 18 42 L 23 47 Z" fill="#475569" stroke="#1e293b" stroke-width="3" transform="rotate(-30 23 37)"/>
+            <path d="M 72 32 A 10 10 0 0 0 82 42 L 77 47 Z" fill="#475569" stroke="#1e293b" stroke-width="3" transform="rotate(30 77 37)"/>
+            <line x1="30" y1="83" x2="20" y2="93" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+            <line x1="70" y1="83" x2="80" y2="93" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+            <rect x="46" y="21" width="8" height="6" fill="#64748b" stroke="#1e293b" stroke-width="3" rx="2"/>
+            <rect x="42" y="17" width="16" height="4" fill="#64748b" stroke="#1e293b" stroke-width="3" rx="2"/>
+            <circle cx="50" cy="55" r="23" fill="#ffffff"/>
+            <circle cx="43" cy="50" r="3" fill="#000000"/>
+            <circle cx="57" cy="50" r="3" fill="#000000"/>
+            <path d="M 41 45 Q 43 43 45 45" stroke="#000" stroke-width="1.5" fill="none"/>
+            <path d="M 55 45 Q 57 43 59 45" stroke="#000" stroke-width="1.5" fill="none"/>
+            <path d="M 46 62 Q 50 67 54 62" stroke="#e11d48" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <line x1="50" y1="55" x2="50" y2="42" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+            <line x1="50" y1="55" x2="62" y2="55" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span id="generateBtnText">Start 🏁</span>
+        </button>
+      </div>
+      <!-- Box 3: Time Clock -->
+      <div class="glass-panel" style="flex: 1; min-width: 0; height: 36px; padding: 0 8px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid rgba(6, 182, 212, 0.25); background: rgba(255,255,255,0.05); gap: 4px; box-sizing: border-box;">
+        <span id="statTimer" class="stat-value" style="font-size: 1.1rem; font-weight: 800; font-family: var(--font-display); color: var(--text-main); line-height: 1;">00:00:00</span>
+        <button id="timerToggleBtn" class="btn btn-secondary" style="height: 16px; padding: 0 3px; font-size: 0.5rem; min-width: auto; line-height: 1; border-radius: 3px;" onclick="toggleTimerVisibility()">
+          HIDE
+        </button>
+      </div>
+    </div>
   </header>
 
   <div class="app-layout">
-    
-    <!-- LEFT PANEL: Game Controls & Settings (Consolidated) -->
-    <div class="control-panel">
-      <div class="glass-panel card-aqua-blue" style="display: flex; flex-direction: column; gap: 10px;">
-        <!-- Elite Token & Ticket Dashboard -->
-        <div class="elite-wallet-section" style="background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 6px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 4px;">
-              🪙 Tokens: <strong id="tokenCountText" style="color: #fbbf24; font-size: 0.95rem;">5</strong>
-            </span>
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 4px;">
-              🎫 Daily Ticket: <strong id="dailyTicketText" style="color: #10b981; font-size: 0.95rem;">1/1</strong>
-            </span>
-          </div>
-          <div style="display: flex; gap: 4px;">
-            <button class="btn btn-secondary btn-small" onclick="simulateWatchAd()" style="flex: 1; height: 24px; font-size: 0.65rem; padding: 2px;">
-              📺 Watch Ad (+1 Token)
-            </button>
-            <button class="btn btn-secondary btn-small" onclick="simulateBuyTokens()" style="flex: 1; height: 24px; font-size: 0.65rem; padding: 2px;">
-              💵 Buy 5 Tokens
-            </button>
-          </div>
-        </div>
-
-        <h3>Player Settings</h3>
-        
-        <!-- Difficulty Select and Start next to each other -->
-        <div class="control-row" style="gap: 6px;">
-          <div class="form-group" style="flex: 0.75;">
-            <select id="difficultySelect">
-              <option value="easy">Easy</option>
-              <option value="intermediate" selected>Intermediate</option>
-              <option value="hard">Hard</option>
-              <option value="master">Master</option>
-            </select>
-          </div>
-          <button id="generateBtn" class="btn" style="flex: 1.25; height: 28px;" onclick="generateNewPuzzle()">
-            Start 🏁
-          </button>
-        </div>
-
-        <!-- Alert, Sound, Theme buttons in 1 row -->
-        <div class="control-row" style="display: flex; gap: 4px; width: 100%;">
-          <div class="form-group" style="flex: 1; align-items: center;">
-            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Alert</label>
-            <button id="alertToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleAlert()">
-              ON
-            </button>
-          </div>
-          <div class="form-group" style="flex: 1; align-items: center;">
-            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Sound</label>
-            <button id="soundToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleSound()">
-              ON
-            </button>
-          </div>
-          <div class="form-group" style="flex: 1; align-items: center;">
-            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Theme</label>
-            <button id="themeToggleBtn" class="btn btn-secondary" style="width: 100%; height: 26px; padding: 2px; font-size: 0.7rem;" onclick="toggleThemeMode()">
-              DARK
-            </button>
-          </div>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid rgba(6, 182, 212, 0.25); margin: 4px 0;">
-
-        <!-- Puzzle Progress and Timer in one row -->
-        <div class="control-row" style="justify-content: space-between; align-items: center; width: 100%;">
-          <!-- Progress (Left) -->
-          <div style="flex: 1.2; display: flex; flex-direction: column; gap: 2px;">
-            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500; display: flex; justify-content: space-between;">
-              <span>Progress: <strong id="progressText">0%</strong></span>
-              <span id="docNumDisplay" style="color: var(--color-aqua-blue); font-weight: 700;">Doc #: -</span>
-            </span>
-            <div class="progress-bar-outer" style="height: 4px;">
-              <div id="progressBar" class="progress-bar-inner"></div>
-            </div>
-          </div>
-          <!-- Timer (Right) -->
-          <div style="flex: 0.8; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
-            <div id="statTimer" class="stat-value" style="font-size: 1.15rem; line-height: 1; font-weight: 700;">00:00</div>
-            <button id="timerToggleBtn" class="btn btn-secondary btn-small" style="height: 22px; padding: 2px 6px; font-size: 0.65rem; min-width: auto;" onclick="toggleTimerVisibility()">
-              HIDE
-            </button>
-          </div>
-        </div>
-
-        <!-- Row of Actions: Reset, Solution, New Game -->
-        <div class="bottom-actions-row" style="display: flex; gap: 4px;">
-          <button id="undoBtn" class="btn btn-secondary" onclick="handleUndo()" title="Undo [Ctrl+Z]" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
-            Undo
-          </button>
-          <button id="resetBtn" class="btn btn-secondary" onclick="resetBoard()" title="Reset (Clear all)" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
-            Reset
-          </button>
-          <button id="solveBtn" class="btn btn-secondary" onclick="confirmShowSolution()" title="Solution" style="flex: 1; padding: 4px; font-size: 0.75rem; height: 32px;">
-            Solution
-          </button>
-          <button id="newGameBtn" class="btn btn-secondary" onclick="generateNewPuzzle()" title="New Game" style="flex: 1.2; padding: 4px; font-size: 0.75rem; height: 32px;">
-            New Game
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- RIGHT PANEL: Interactive Grid and Keypad -->
     <div class="grid-panel">
-      
       <!-- Coordinate Headers Wrapper -->
-      <div class="grid-wrapper-with-headers">
+      <div class="grid-wrapper-with-headers" style="position: relative;">
+        <!-- Copyright vertical (rotated) outside right side -->
+        <div style="position: absolute; right: -42px; bottom: 20px; writing-mode: vertical-rl; text-orientation: mixed; font-family: var(--font-sans); font-size: 0.65rem; font-weight: 700; color: var(--text-muted); opacity: 0.6; white-space: nowrap; transform: rotate(180deg); pointer-events: none; letter-spacing: 0.08em; z-index: 10;">
+          © 2026 William H. Chan
+        </div>
         <!-- Top Left spacer -->
         <div></div>
         
@@ -173,31 +126,7 @@
             </button>
           </div>
 
-          <!-- Locked Overlay -->
-          <div id="lockedOverlay" class="generator-loading-overlay">
-            <div style="font-size: 3rem; animation: pulse 2s infinite;">🔒</div>
-            <div class="loading-text" id="lockedOverlayTitle" style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase;">
-              Time Expired
-            </div>
-            <div id="lockedOverlayMessage" style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0 16px 0; text-align: center; max-width: 80%;">
-              This puzzle has expired (1-hour limit). Spend 1 Token to add 1 more hour and resume.
-            </div>
-            <div style="display: flex; gap: 8px;" id="lockActionsArea">
-              <!-- Actions dynamic based on hour limit -->
-            </div>
-          </div>
 
-          <!-- Ad Player Overlay -->
-          <div id="adPlayerOverlay" class="generator-loading-overlay">
-            <div style="font-size: 3rem; animation: pulse 2s infinite;">📺</div>
-            <div class="loading-text" id="adPlayerTitle" style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase;">
-              Playing Ad
-            </div>
-            <div id="adPlayerTimer" style="font-size: 2rem; font-weight: 800; color: #fbbf24; margin: 10px 0;">15</div>
-            <div id="adPlayerMessage" style="font-size: 0.8rem; color: var(--text-muted); text-align: center; max-width: 85%;">
-              Please wait while the break ad finishes...
-            </div>
-          </div>
         </div>
       </div>
 
@@ -206,31 +135,114 @@
         <div id="keypadGrid" class="keypad-grid"></div>
         
         <!-- Action Row: Clue, Erase, Pause (Enforced side-by-side row) -->
-        <div class="keypad-actions">
-          <!-- Notes button -->
-          <button id="clueBtn" class="btn btn-secondary btn-small" onclick="toggleClueMode()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
-            <span>Notes</span>
-            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[H]</span>
-          </button>
+        <div style="display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
+          <!-- Left Container: Play Tools -->
+          <div class="glass-panel" style="display: flex; gap: 6px; padding: 6px; border-radius: 8px; background: rgba(255,255,255,0.05); align-items: center; border: 1.5px solid rgba(6, 182, 212, 0.25);">
+            <!-- Notes button (Custom Pencil/Notebook graphic) -->
+            <button id="clueBtn" class="btn btn-secondary" onclick="toggleClueMode()" title="Notes" style="height: 42px; padding: 0 12px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 100%;">
+                <svg width="24" height="24" viewBox="0 0 100 100" style="flex-shrink: 0;">
+                  <g transform="rotate(-15 50 50)">
+                    <path d="M 25 75 L 75 25 L 85 35 L 35 85 Z" fill="#eab308" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M 75 25 L 80 20 L 90 30 L 85 35 Z" fill="#94a3b8" stroke="#475569" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M 80 20 L 85 15 L 95 25 L 90 30 Z" fill="#ec4899" stroke="#9d174d" stroke-width="4"/>
+                    <path d="M 25 75 L 15 85 L 20 90 L 35 85 Z" fill="#fed7aa" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M 15 85 L 10 90 L 20 90 Z" fill="#000000"/>
+                  </g>
+                </svg>
+                <span style="font-size: 0.85rem; font-weight: 700; line-height: 1; white-space: nowrap;">Notes</span>
+              </div>
+            </button>
 
-          <!-- Erase button -->
-          <button id="eraseBtn" class="btn btn-secondary btn-small" onclick="clearActiveCell()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
-            <span>Erase (pick cell)</span>
-            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Delete]</span>
-          </button>
+            <!-- Erase button (Isometric 3D Eraser with Smiley Face - Enlarged) -->
+            <button id="eraseBtn" class="btn btn-secondary btn-square" onclick="clearActiveCell()" title="Erase">
+              <svg width="34" height="34" viewBox="0 0 100 100">
+                <!-- Shadow at base -->
+                <ellipse cx="45" cy="85" rx="35" ry="8" fill="rgba(0,0,0,0.18)"/>
+                <!-- Tilted 3D Eraser Block -->
+                <g transform="rotate(-15 50 50)">
+                  <!-- Eraser base pink part -->
+                  <path d="M 20 60 L 45 25 L 75 42 L 50 78 Z" fill="#db2777" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+                  <!-- Eraser top highlights -->
+                  <path d="M 20 52 L 45 17 L 75 34 L 50 70 Z" fill="#fbcfe8" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+                  <path d="M 20 52 L 50 70 L 50 78 L 20 60 Z" fill="#f472b6" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+                  <path d="M 50 70 L 75 34 L 78 42 L 50 78 Z" fill="#db2777" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+                  
+                  <!-- Blue Sleeve wrapped around the middle -->
+                  <path d="M 32 52 L 47 30 L 62 40 L 47 62 Z" fill="#1e3a8a" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M 32 52 L 47 62 L 47 67 L 32 57 Z" fill="#3b82f6" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+                  
+                  <!-- Cute Smiley Face on the sleeve -->
+                  <circle cx="38" cy="46" r="2" fill="#ffffff"/>
+                  <circle cx="44" cy="50" r="2" fill="#ffffff"/>
+                  <path d="M 39 51 Q 41 53 43 51" stroke="#ffffff" stroke-width="1.5" fill="none"/>
+                </g>
+              </svg>
+            </button>
 
-          <!-- Pause button -->
-          <button id="pauseBtn" class="btn btn-secondary btn-small" onclick="togglePauseGame()" style="flex: 1; height: 36px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
-            <span>Pause ⏸️</span>
-            <span style="font-family: Arial, sans-serif; font-size: 8px; font-weight: normal; opacity: 0.85; margin-top: 1px; text-transform: uppercase;">[Space]</span>
-          </button>
+            <!-- Pause button (Custom vertical bars Pause graphic) -->
+            <button id="pauseBtn" class="btn btn-secondary btn-square" onclick="togglePauseGame()" title="Pause">
+              <svg width="28" height="28" viewBox="0 0 100 100">
+                <rect x="25" y="15" width="16" height="70" fill="#93c5fd" stroke="#1e3a8a" stroke-width="5" rx="6" />
+                <rect x="58" y="15" width="16" height="70" fill="#93c5fd" stroke="#1e3a8a" stroke-width="5" rx="6" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Right Container: Settings Toggles with Tweak rectangular layout -->
+          <div class="glass-panel" style="display: flex; gap: 8px; padding: 6px; border-radius: 8px; background: rgba(255,255,255,0.05); align-items: center; border: 1.5px solid rgba(6, 182, 212, 0.25);">
+            <!-- Alarm -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+              <span style="font-family: 'Arial Narrow', Arial, sans-serif; font-size: 5px; font-weight: 800; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; line-height: 1;">ALARM</span>
+              <button id="alertToggleBtn" class="btn btn-secondary alert-toggle-btn btn-on" onclick="toggleAlert()" title="Toggle Alert Mode" style="width: 52px; height: 32px; font-size: 0.75rem; border-radius: 4px; padding: 0;">ON</button>
+            </div>
+            <!-- Sound -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+              <span style="font-family: 'Arial Narrow', Arial, sans-serif; font-size: 5px; font-weight: 800; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; line-height: 1;">SOUND</span>
+              <button id="soundToggleBtn" class="btn btn-secondary sound-toggle-btn btn-on" onclick="toggleSound()" title="Toggle Sound Mode" style="width: 52px; height: 32px; font-size: 0.75rem; border-radius: 4px; padding: 0;">ON</button>
+            </div>
+            <!-- Theme -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+              <span style="font-family: 'Arial Narrow', Arial, sans-serif; font-size: 5px; font-weight: 800; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; line-height: 1;">THEME</span>
+              <button id="themeToggleBtn" class="btn btn-secondary theme-toggle-btn btn-on" onclick="toggleThemeMode()" title="Toggle Dark/Light Mode" style="width: 52px; height: 32px; font-size: 0.7rem; border-radius: 4px; padding: 0;">DARK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Panel placed at the bottom -->
+      <div class="control-panel" style="margin-top: 15px; width: 100%; max-width: 530px;">
+        <div class="glass-panel card-aqua-blue" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+          <!-- Progress info and Bar (no extra text wordings) -->
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px;">
+            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Progress: <span id="progressText" style="color: var(--text-main); font-weight: 800;">0%</span></span>
+            <span id="docNumDisplay" style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;"></span>
+          </div>
+          <div class="progress-bar-outer" style="height: 5px; width: 100%;">
+            <div id="progressBar" class="progress-bar-inner"></div>
+          </div>
+
+          <!-- Row of Actions: Reset, Solution, New Game -->
+          <div class="bottom-actions-row" style="display: flex; gap: 4px; margin-top: 2px;">
+            <button id="undoBtn" class="btn btn-action-undo" onclick="handleUndo()" title="Undo [Ctrl+Z]" style="flex: 1; height: 32px; font-size: 0.7rem; padding: 2px;">
+              ↩️ Undo
+            </button>
+            <button id="resetBtn" class="btn btn-action-reset" onclick="resetBoard()" title="Reset (Clear all)" style="flex: 1; height: 32px; font-size: 0.7rem; padding: 2px;">
+              🔄 Reset
+            </button>
+            <button id="solveBtn" class="btn btn-action-solve" onclick="confirmShowSolution()" title="Solution" style="flex: 1; height: 32px; font-size: 0.7rem; padding: 2px;">
+              💡 Solution
+            </button>
+            <button id="newGameBtn" class="btn btn-action-new" onclick="generateNewPuzzle()" title="New Game" style="flex: 1.2; height: 32px; font-size: 0.7rem; padding: 2px;">
+              🎮 New Game
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Console Log Status Bar -->
       <div id="status" class="status-bar">System Ready. Choose difficulty and click 'Start 🏁' to begin.</div>
     </div>
-
   </div>
 
   <!-- Solution Confirmation Modal -->
@@ -245,15 +257,22 @@
     </div>
   </div>
 
-  <!-- Token Confirmation Modal -->
-  <div id="tokenModal" class="modal-overlay">
-    <div class="glass-panel modal-card card-aqua-blue">
-      <h3>Spend 1 Token?</h3>
-      <p>You have already played your free daily game. Spend 1 Token 🪙 to unlock another game?</p>
-      <div class="modal-actions">
-        <button class="btn btn-primary" onclick="confirmSpendToken(true)">Spend 🪙</button>
-        <button class="btn btn-secondary" onclick="confirmSpendToken(false)">Cancel</button>
-      </div>
+  <!-- Feedback Modal -->
+  <div id="feedbackModal" class="modal-overlay">
+    <div class="glass-panel modal-card feedback-modal-card card-aqua-blue">
+      <h3>Help Us Improve Sudoku-16!</h3>
+      <p class="feedback-subtitle">Thanks for Playing. Please give us your heartly advice how we could improve this game to all levels of Players. If everything's good, please come back to play again.</p>
+      
+      <form id="feedbackForm" class="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+        <div class="feedback-field">
+          <textarea id="feedbackSuggestions" name="suggestions" rows="4" placeholder="Type your suggestions, bug reports, or comments here..." required></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Submit & Continue</button>
+          <button type="button" class="btn btn-secondary" onclick="closeFeedbackModal(true)">Skip</button>
+        </div>
+      </form>
     </div>
   </div>
 

@@ -4,7 +4,7 @@
  * and high-fidelity transitions and animations.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
   /* Default Stage 1 Dark Mode - Sapphire Blue */
@@ -16,15 +16,15 @@
   --accent-glow: rgba(59, 130, 246, 0.4);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --grid-border: #94a3b8; /* Silver grey inside lines for high contrast in Dark Mode */
-  --box-border: #3b82f6;
+  --grid-border: #ffffff; /* White cell divider lines in Dark Mode */
+  --box-border: #60a5fa;
   --cell-bg-even: #0f172a; 
   --cell-bg-odd: #1e293b; 
   --cell-hover: rgba(59, 130, 246, 0.2);
   --cell-highlight: rgba(59, 130, 246, 0.35);
   --cell-same-val: rgba(59, 130, 246, 0.35);
   --text-given: #ffffff;
-  --text-player: #ef4444; /* Red colors for player digits in Dark Mode */
+  --text-player: #ff3b30; /* Bright red color for player digits in Dark Mode */
   --text-note: #cbd5e1;
   
   --collision-bg: rgba(239, 68, 68, 0.2);
@@ -32,11 +32,12 @@
   --collision-text: #f87171;
 
   --cell-size: 38px;
-  --font-display: 'Abadi Extra Light', 'Abadi', 'Abadi MT Condensed Extra Light', sans-serif;
-  --font-sans: 'Abadi Extra Light', 'Abadi', 'Abadi MT Condensed Extra Light', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
   
   --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   --glass-blur: backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  --watermark: url("data:image/svg+xml;utf8,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27320%27%20height=%27200%27%20viewBox=%270%200%20320%20200%27%3E%3Ctext%20x=%27160%27%20y=%27100%27%20fill=%27rgba(255,255,255,0.03)%27%20font-size=%2714%27%20font-family=%27Space%20Grotesk,%20sans-serif%27%20font-weight=%27800%27%20letter-spacing=%270.15em%27%20text-anchor=%27middle%27%20transform=%27rotate(-20%20160%20100)%27%3EWILLIAMHCHANSTUDIO%3C/text%3E%3C/svg%3E");
 }
 
 /* --- THEME STAGE 2: Amethyst Purple (33% to 66% Completion) --- */
@@ -78,14 +79,15 @@ body.light-mode {
   --card-border: rgba(148, 163, 184, 0.35);
   --text-main: #0f172a;
   --text-muted: #475569;
-  --grid-border: #2563eb; /* Blue lines for high contrast in Light Mode */
-  --box-border: #2563eb;
-  --cell-bg-even: #ffffff;
-  --cell-bg-odd: #f1f5f9;
+  --grid-border: #94a3b8; /* Darker cell divider lines in Light Mode */
+  --box-border: #60a5fa; /* Lighter blue block divider lines */
+  --cell-bg-even: #f3e7fe; /* Solid Purple (14% depth, 30% reduction from 20%) */
+  --cell-bg-odd: #def5ed;   /* Solid Green (14% depth, 30% reduction from 20%) */
   --text-given: #0f172a;
-  --text-player: #dc2626; /* Red colors for player digits in Light Mode */
+  --text-player: #d60000; /* Rich red color for player digits in Light Mode */
   --text-note: #475569;
   --shadow-premium: 0 8px 32px 0 rgba(15, 23, 42, 0.15);
+  --watermark: url("data:image/svg+xml;utf8,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27320%27%20height=%27200%27%20viewBox=%270%200%20320%20200%27%3E%3Ctext%20x=%27160%27%20y=%27100%27%20fill=%27rgba(0,0,0,0.03)%27%20font-size=%2714%27%20font-family=%27Space%20Grotesk,%20sans-serif%27%20font-weight=%27800%27%20letter-spacing=%270.15em%27%20text-anchor=%27middle%27%20transform=%27rotate(-20%20160%20100)%27%3EWILLIAMHCHANSTUDIO%3C/text%3E%3C/svg%3E");
   
   /* Light Stage 1 */
   --accent-color: #1d4ed8;
@@ -101,7 +103,7 @@ body.light-mode.stage-2 {
   --accent-color: #6d28d9;
   --accent-hover: #4c1d95;
   --accent-glow: rgba(109, 40, 217, 0.2);
-  --box-border: #2563eb;
+  --box-border: #60a5fa;
   --cell-hover: rgba(109, 40, 217, 0.15);
   --cell-highlight: rgba(255, 255, 0, 0.5);
   --cell-same-val: rgba(109, 40, 217, 0.22);
@@ -112,10 +114,17 @@ body.light-mode.stage-3 {
   --accent-color: #047857;
   --accent-hover: #064e3b;
   --accent-glow: rgba(4, 120, 87, 0.2);
-  --box-border: #2563eb;
+  --box-border: #60a5fa;
   --cell-hover: rgba(4, 120, 87, 0.15);
   --cell-highlight: rgba(255, 255, 0, 0.5);
   --cell-same-val: rgba(4, 120, 87, 0.22);
+}
+
+/* Light Mode coordinate headers crisp override */
+body.light-mode .grid-top-headers,
+body.light-mode .grid-left-headers {
+  text-shadow: none !important;
+  color: #0f172a !important;
 }
 
 /* --- Base Reset & Transition --- */
@@ -127,8 +136,10 @@ body.light-mode.stage-3 {
 
 body {
   font-family: var(--font-sans);
-  background: linear-gradient(180deg, #fc8301 0%, #fc6400 100%) no-repeat center center fixed;
-  background-size: cover;
+  background-color: var(--bg-color);
+  background-image: var(--watermark);
+  background-repeat: repeat;
+  background-attachment: fixed;
   color: var(--text-main);
   min-height: 100vh;
   padding: 12px;
@@ -136,7 +147,7 @@ body {
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
-  transition: background 1s ease, color 1s ease;
+  transition: background-color 1s ease, color 1s ease;
 }
 
 /* --- Layout Elements --- */
@@ -149,14 +160,15 @@ header {
 }
 
 #appIcon {
-  width: 95px;
-  height: 95px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid var(--accent-color);
+  border-radius: 10px;
+  border: 0.5px solid rgba(255, 255, 255, 0.4);
   box-shadow: var(--shadow-premium);
-  margin-bottom: 6px;
   transition: border-color 1s ease;
+  cursor: pointer;
+  margin: 0;
 }
 
 header p {
@@ -238,7 +250,7 @@ body.light-mode .card-aqua-blue {
   font-size: 0.78rem;
   font-weight: 800;
   color: var(--accent-color);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   transition: color 1s ease;
 }
 
@@ -252,7 +264,7 @@ body.light-mode .card-aqua-blue {
   font-size: 0.78rem;
   font-weight: 800;
   color: var(--accent-color);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   align-items: center;
   justify-content: center;
   transition: color 1s ease;
@@ -290,7 +302,7 @@ body.light-mode .card-aqua-blue {
   user-select: none;
   font-family: var(--font-display);
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   border-right: 1px solid var(--grid-border);
   border-bottom: 1px solid var(--grid-border);
   transition: background-color 0.2s ease, border 0.2s ease;
@@ -323,7 +335,7 @@ body.light-mode .card-aqua-blue {
 }
 
 body.light-mode .cell.given {
-  color: #0f172a;
+  color: #000000;
 }
 
 /* Player Fills */
@@ -381,6 +393,23 @@ body.light-mode .cell.given {
   border: 1.5px solid currentColor;
   font-size: 0.85rem;
   line-height: 1;
+}
+
+/* White text on solid Red Circle for player inputs */
+.player-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  height: 80%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: #dc2626 !important; /* Rich Red background */
+  color: #ffffff !important; /* Crisp White text */
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Panel Sections & UI Elements --- */
@@ -554,8 +583,8 @@ body.light-mode .btn:disabled.btn-progress {
 
 /* Numbers buttons 1-16 under Puzzle in Red background */
 .keypad-grid .key-btn {
-  background-color: #2563eb !important; /* Blue */
-  border: 1px solid #1d4ed8 !important;
+  background-color: #dc2626 !important; /* Red */
+  border: 1px solid #b91c1c !important;
   color: #ffffff !important;
   border-radius: 6px;
   padding: 0;
@@ -565,15 +594,15 @@ body.light-mode .btn:disabled.btn-progress {
   justify-content: center;
   font-family: var(--font-display);
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
 }
 
 .keypad-grid .key-btn:hover {
-  background-color: #1d4ed8 !important;
-  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.4) !important;
+  background-color: #b91c1c !important;
+  box-shadow: 0 3px 6px rgba(220, 38, 38, 0.4) !important;
   transform: scale(1.05);
 }
 
@@ -743,14 +772,14 @@ body.light-mode .generator-loading-overlay {
 }
 
 .floating-key-btn {
-  background: #2563eb !important;
-  border: 1.5px solid #1d4ed8 !important;
+  background: #dc2626 !important;
+  border: 1.5px solid #b91c1c !important;
   border-radius: 6px;
   color: #ffffff !important;
   padding: 6px;
   font-family: var(--font-display);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   text-align: center;
   display: flex;
@@ -759,8 +788,8 @@ body.light-mode .generator-loading-overlay {
 }
 
 .floating-key-btn:hover {
-  background: #1d4ed8 !important;
-  border-color: #1e40af !important;
+  background: #b91c1c !important;
+  border-color: #991b1b !important;
 }
 
 .floating-key-btn .number-circle {
@@ -986,5 +1015,332 @@ body.light-mode .elite-wallet-section .btn-secondary:hover {
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
   animation: pulse 1s infinite;
 }
+
+/* --- Beta Badge & Feedback Modal Styles --- */
+.beta-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #ef4444; /* red */
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-left: 6px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  display: inline-block;
+  line-height: 1;
+}
+
+.feedback-modal-card {
+  max-width: 460px !important;
+  width: 90% !important;
+  text-align: left !important;
+  padding: 24px !important;
+  background: var(--card-bg) !important;
+  border: 1.5px solid var(--card-border) !important;
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+  display: flex;
+  flex-direction: column;
+  gap: 16px !important;
+}
+
+.feedback-modal-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--accent-color) !important;
+  margin: 0;
+  text-align: center;
+}
+
+.feedback-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feedback-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feedback-field textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s ease;
+  resize: vertical;
+}
+
+body.light-mode .feedback-field textarea {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #0f172a;
+}
+
+.feedback-field textarea:focus {
+  border-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+body.light-mode .feedback-field textarea:focus {
+  background: rgba(0, 0, 0, 0.01);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Level-specific Background Themes --- */
+body.theme-easy {
+  background-color: #fbbf24 !important; /* Solid Yellow */
+}
+body.light-mode.theme-easy {
+  background-color: #fbbf24 !important; /* Solid Yellow */
+}
+
+body.theme-intermediate {
+  background-color: #10b981 !important; /* Solid Green */
+}
+body.light-mode.theme-intermediate {
+  background-color: #10b981 !important; /* Solid Green */
+}
+
+body.theme-hard {
+  background-color: #f97316 !important; /* Solid Orange */
+}
+body.light-mode.theme-hard {
+  background-color: #f97316 !important; /* Solid Orange */
+}
+
+body.theme-expert {
+  background-color: #d946ef !important; /* Solid Purple Magenta */
+}
+body.light-mode.theme-expert {
+  background-color: #d946ef !important; /* Solid Purple Magenta */
+}
+
+/* --- Level-specific styling for the select dropdown --- */
+select#difficultySelect {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+select#difficultySelect.level-easy {
+  background-color: #fbbf24 !important; /* Yellow */
+  border-color: #d97706 !important;
+  color: #000000 !important;
+}
+
+select#difficultySelect.level-intermediate {
+  background-color: #10b981 !important; /* Green */
+  border-color: #047857 !important;
+  color: #ffffff !important;
+}
+
+select#difficultySelect.level-hard {
+  background-color: #f97316 !important; /* Orange */
+  border-color: #c2410c !important;
+  color: #ffffff !important;
+}
+
+select#difficultySelect.level-expert {
+  background-color: #d946ef !important; /* Purple Magenta */
+  border-color: #a21caf !important;
+  color: #ffffff !important;
+}
+
+/* Styled option backgrounds when selecting */
+select#difficultySelect option[value="easy"] {
+  background-color: #fef08a !important;
+  color: #854d0e !important;
+  font-weight: bold;
+}
+select#difficultySelect option[value="intermediate"] {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  font-weight: bold;
+}
+select#difficultySelect option[value="hard"] {
+  background-color: #ffedd5 !important;
+  color: #9a3412 !important;
+  font-weight: bold;
+}
+select#difficultySelect option[value="expert"] {
+  background-color: #f5d0fe !important;
+  color: #86198f !important;
+  font-weight: bold;
+}
+
+.app-footer {
+  text-align: center;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  width: 100%;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  opacity: 0.7;
+}
+
+body.light-mode .app-footer {
+  color: #475569;
+  text-shadow: none;
+  opacity: 0.85;
+}
+
+/* Custom Game Font for Title */
+.app-title {
+  font-family: 'Uncial Antiqua', cursive !important;
+  color: #ffffff !important;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+  font-weight: normal !important;
+  text-align: center;
+}
+
+body.light-mode .app-title {
+  color: #0f172a !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Glossy Colorful Toggles in Player Settings */
+.alert-toggle-btn.btn-on {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%) no-repeat !important; /* Red */
+  border: 1.5px solid #b91c1c !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4) !important;
+}
+.alert-toggle-btn.btn-on:hover {
+  background: #b91c1c !important;
+}
+
+.sound-toggle-btn.btn-on {
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 100%) no-repeat !important; /* Orange */
+  border: 1.5px solid #c2410c !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(249, 115, 22, 0.4) !important;
+}
+.sound-toggle-btn.btn-on:hover {
+  background: #c2410c !important;
+}
+
+.theme-toggle-btn.btn-on {
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%) no-repeat !important; /* Blue Light */
+  border: 1.5px solid #1e40af !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4) !important;
+}
+.theme-toggle-btn.btn-on:hover {
+  background: #1e40af !important;
+}
+
+.btn-off {
+  background: linear-gradient(180deg, #64748b 0%, #475569 100%) no-repeat !important; /* Dark Slate OFF */
+  border: 1.5px solid #334155 !important;
+  color: #f1f5f9 !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+.btn-off:hover {
+  background: #475569 !important;
+}
+
+/* Colorful Bottom Action Buttons */
+.btn-action-undo {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) no-repeat !important; /* Amber Yellow */
+  border: 1.5px solid #b45309 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px rgba(217, 119, 6, 0.25) !important;
+}
+.btn-action-undo:hover {
+  background: #d97706 !important;
+  transform: translateY(-1px);
+}
+
+.btn-action-reset {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) no-repeat !important; /* Emerald Green */
+  border: 1.5px solid #047857 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25) !important;
+}
+.btn-action-reset:hover {
+  background: #059669 !important;
+  transform: translateY(-1px);
+}
+
+.btn-action-solve {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) no-repeat !important; /* Amethyst Purple */
+  border: 1.5px solid #5b21b6 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.25) !important;
+}
+.btn-action-solve:hover {
+  background: #6d28d9 !important;
+  transform: translateY(-1px);
+}
+
+.btn-action-new {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) no-repeat !important; /* Sapphire Blue */
+  border: 1.5px solid #1e40af !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25) !important;
+}
+.btn-action-new:hover {
+  background: #1d4ed8 !important;
+  transform: translateY(-1px);
+}
+
+/* Square Action and Toggle Buttons */
+.btn-square {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 580px) {
+  .btn-square {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 6px !important;
+    font-size: 0.7rem !important;
+  }
+  .btn-square svg {
+    transform: scale(0.85);
+  }
+}
+
 
 
